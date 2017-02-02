@@ -84,9 +84,9 @@
     
     NSString *requestedUrl = [NSString stringWithFormat:@"%@/check_in/%@?ct_json", [defaults stringForKey:@"baseUrl"], ticketData[@"checksum"]];
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager GET:requestedUrl parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    [manager GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
         
 //        NSLog(@"CHECKIN RESPONSE %@", responseObject);
         
@@ -96,8 +96,8 @@
         } else {
             [self showOverlayWithStatus:YES];
         }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+    } failure:^(NSURLSessionTask *task, NSError *error) {
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
         [self showOverlayWithStatus:NO];
     }];
 }
@@ -182,10 +182,10 @@
     NSString *requestedUrl = [NSString stringWithFormat:@"%@/ticket_checkins/%@?ct_json", [defaults stringForKey:@"baseUrl"], ticketData[@"checksum"]];
 //    NSLog(@"Details Request URL: %@", requestedUrl);
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager GET:requestedUrl parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    [manager GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
         
-        [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
         
         checkinsArray = [[NSArray alloc] initWithArray:responseObject];
         
@@ -194,8 +194,8 @@
         
         [tblCheckins reloadData];
         
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+    } failure:^(NSURLSessionTask *task, NSError *error) {
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
         
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:[defaults objectForKey:@"ERROR"] message:[defaults objectForKey:@"ERROR_LOADING_DATA"] preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction *okAction = [UIAlertAction actionWithTitle:[defaults objectForKey:@"OK"] style:UIAlertActionStyleDefault handler:nil];

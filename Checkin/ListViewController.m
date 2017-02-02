@@ -133,9 +133,9 @@
     NSString *requestedUrl = [NSString stringWithFormat:@"%@/tickets_info/%@/1/?ct_json", [defaults stringForKey:@"baseUrl"], [defaults stringForKey:@"soldTickets"]];
 //NSLog(@"REquest %@", requestedUrl);
     [MBProgressHUD showHUDAddedTo:tblTickets animated:YES];
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager GET:requestedUrl parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [MBProgressHUD hideAllHUDsForView:tblTickets animated:YES];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    [manager GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
+        [MBProgressHUD hideHUDForView:tblTickets animated:YES];
         listItems = [NSMutableArray array];
         unsigned int i;
         if ([responseObject count] > 0) {
@@ -148,16 +148,14 @@
             }
         }
         [tblTickets reloadData];
-    
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+    } failure:^(NSURLSessionTask *task, NSError *error) {
+        [MBProgressHUD hideHUDForView:tblTickets animated:YES];
         
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:[defaults objectForKey:@"ERROR"] message:[defaults objectForKey:@"ERROR_LOADING_DATA"] preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction *okAction = [UIAlertAction actionWithTitle:[defaults objectForKey:@"OK"] style:UIAlertActionStyleDefault handler:nil];
         [alert addAction:okAction];
         [self presentViewController:alert animated:YES completion:nil];
     }];
-
 }
 
 #pragma mark - Search

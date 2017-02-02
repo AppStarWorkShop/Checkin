@@ -92,15 +92,16 @@
             
             return;
         }
-//        NSLog(@"URL: %@", requestedUrl);
+        NSLog(@"URL: %@", requestedUrl);
         
-        AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-        [manager.securityPolicy setAllowInvalidCertificates:YES];
-        [manager GET:requestedUrl parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+        manager.securityPolicy.allowInvalidCertificates = YES;
+        manager.securityPolicy.validatesDomainName = NO;
+//        [manager.securityPolicy setAllowInvalidCertificates:YES];
+        [manager GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
             
-            [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-            
-//            NSLog(@"responseObject: %@", responseObject);
+            NSLog(@"responseObject: %@", responseObject);
             // Store data to user defaults
             if([responseObject[@"pass"] boolValue] == YES) {
                 [defaults setObject:url forKey:@"url"];
@@ -114,9 +115,8 @@
                 }
                 
                 NSString *translationURL = [NSString stringWithFormat:@"%@/translation?ct_json", baseUrl];
-                [manager GET:translationURL parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                [manager GET:translationURL parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
                     if(responseObject[@"pass"] == nil) {
-                        
                         [defaults setObject: responseObject[@"WORDPRESS_INSTALLATION_URL"] forKey:@"WORDPRESS_INSTALLATION_URL"];
                         [defaults setObject: responseObject[@"API_KEY"] forKey:@"API_KEY"];
                         [defaults setObject: responseObject[@"AUTO_LOGIN"] forKey:@"AUTO_LOGIN"];
@@ -148,12 +148,12 @@
                         [defaults setBool:YES forKey:@"custom_translations"];
                         [defaults synchronize];
                     }
-                }failure:^(AFHTTPRequestOperation *operation, NSError *error) {}];
+                }failure:^(NSURLSessionTask *task, NSError *error) {}];
                 
                 // check for license key
                 if([responseObject objectForKey:@"tc_iw_is_pr"] != nil && [responseObject[@"tc_iw_is_pr"] boolValue] == YES) {
                     NSString *licenseURL = [NSString stringWithFormat:@"http://update.tickera.com/license/%@/can_access_chrome_app", responseObject[@"license_key"]];
-                    [manager GET:licenseURL parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                    [manager GET:licenseURL parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
                         if([responseObject objectForKey:@"is_valid"] != nil && [responseObject[@"is_valid"] boolValue] == YES) {
                             [self dismissViewControllerAnimated:YES completion:nil];
                         } else {
@@ -165,8 +165,9 @@
                             [defaults setBool:NO forKey:@"autoLogin"];
                             [defaults setBool:NO forKey:@"logged"];
                         }
-                    }failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                        if([operation.response statusCode] != 403) {
+                    }failure:^(NSURLSessionTask *task, NSError *error) {
+                        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)task.response;
+                        if(httpResponse.statusCode != 403) {
                             [self dismissViewControllerAnimated:YES completion:nil];
                         } else {
                             UIAlertController *alert = [UIAlertController alertControllerWithTitle:[defaults objectForKey:@"ERROR"] message:[defaults stringForKey:@"ERROR_LICENSE_KEY"] preferredStyle:UIAlertControllerStyleAlert];
@@ -193,8 +194,8 @@
             }
             [defaults synchronize];
             
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+        } failure:^(NSURLSessionTask *task, NSError *error) {
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
 //            NSLog(@"ERROR %@", error);
             UIAlertController *alert = [UIAlertController alertControllerWithTitle:[defaults objectForKey:@"ERROR"] message:[defaults stringForKey:@"ERROR_LOADING_DATA"] preferredStyle:UIAlertControllerStyleAlert];
             UIAlertAction *okAction = [UIAlertAction actionWithTitle:[defaults objectForKey:@"OK"] style:UIAlertActionStyleDefault handler:nil];

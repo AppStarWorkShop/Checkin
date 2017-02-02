@@ -204,9 +204,9 @@
     }
     
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager GET:requestedUrl parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    [manager GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
 //        NSLog(@"%@", responseObject);
         if([responseObject[@"status"] boolValue]) {
             NSDateFormatter *printFormatter = [[NSDateFormatter alloc] init];
@@ -223,8 +223,8 @@
             [self showOverlayWithStatus:NO];
         }
         
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+    } failure:^(NSURLSessionTask *task, NSError *error) {
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
         [self showOverlayWithStatus:NO];
     }];
 }
