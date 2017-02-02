@@ -18,12 +18,13 @@
 
 @implementation HomeViewController {
     NSUserDefaults *defaults;
+    __weak IBOutlet UILabel *lblSoldTickets;
+    __weak IBOutlet UILabel *lblCheckedIn;
 }
 @synthesize btnBurger;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
     
     if(!defaults) {
         defaults = [NSUserDefaults standardUserDefaults];
@@ -38,10 +39,24 @@
     }
     
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
+    
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    lblCheckedIn.text = @"";
+    lblSoldTickets.text = @"";
+    lblSoldTickets.transform = CGAffineTransformMakeRotation(3.14/2);
+    lblCheckedIn.transform = CGAffineTransformMakeRotation(3.14/2);
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
+    lblCheckedIn.text = [defaults objectForKey:@"CHECKED_IN_TICKETS"];
+    lblSoldTickets.text = [defaults objectForKey:@"SOLD_TICKETS"];
+    self.navigationItem.title = [defaults objectForKey:@"APP_TITLE"];
+    
     [self checkLogin];
 }
 
@@ -58,12 +73,6 @@
 
 /*
 #pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
 */
 - (void)checkLogin
 {
@@ -81,14 +90,9 @@
     NSString *requestedUrl = [NSString stringWithFormat:@"%@/event_essentials?ct_json", [defaults stringForKey:@"baseUrl"]];
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-//    manager.responseSerializer = [AFCompoundResponseSerializer serializer];
-//    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
-//    
     [manager GET:requestedUrl parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-        
-//        NSLog(@"%@",responseObject);
 
         self.lblSold.text = [NSString stringWithFormat:@"%@", responseObject[@"sold_tickets"]];
         self.lblCheckins.text =  [NSString stringWithFormat:@"%@", responseObject[@"checked_tickets"]];
@@ -100,8 +104,11 @@
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"ERROR" message:@"There is a problem in loading your data" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        [alert show];
+        
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:[defaults objectForKey:@"ERROR"] message:[defaults objectForKey:@"ERROR_LOADING_DATA"] preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *okAction = [UIAlertAction actionWithTitle:[defaults objectForKey:@"OK"] style:UIAlertActionStyleDefault handler:nil];
+        [alert addAction:okAction];
+        [self presentViewController:alert animated:YES completion:nil];
     }];
 
 }

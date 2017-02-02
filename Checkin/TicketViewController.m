@@ -19,6 +19,10 @@
     NSArray *checkinsArray;
     NSArray *customFieldsArray;
     NSUserDefaults *defaults;
+    __weak IBOutlet UILabel *lblIDStatic;
+    __weak IBOutlet UILabel *lblPurchased;
+    __weak IBOutlet UILabel *lblCheckins;
+    __weak IBOutlet UINavigationItem *navItem;
 }
 @synthesize btnCheckin, tblCheckins, lblDate, lblHolderName, lblID, ticketData, imgStatusIcon, lblStatusText, lblStatusTitle;
 - (void)viewDidLoad {
@@ -29,23 +33,26 @@
         defaults = [NSUserDefaults standardUserDefaults];
     }
     
+    navItem.title = [defaults objectForKey:@"APP_TITLE"];
+    
     btnCheckin.layer.cornerRadius = 4;
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     
     lblHolderName.text = ticketData[@"name"];
     lblID.text = ticketData[@"checksum"];
-    lblDate.text = ticketData[@"date"];
-    
-//TEST ONLY
-//    customFieldsArray = @[
-//                          @[@"Ticket Type:", @"VIP"],
-//                          @[@"Buyer Name:", @"Hanke Beckett"],
-//                          @[@"Buyer E-mail:", @"example@gmail.com"],
-//                        ];
+    lblDate.text = ticketData[@"payment_date"];
+    lblPurchased.text = [defaults objectForKey:@"PURCHASED"];
+    lblIDStatic.text = [defaults objectForKey:@"ID"];
+    lblCheckins.text = [defaults objectForKey:@"CHECKINS"];
+    [btnCheckin setTitle:[defaults objectForKey:@"CHECK_IN"] forState:UIControlStateNormal];
     
     customFieldsArray = [[NSArray alloc] initWithArray:ticketData[@"custom_fields"]];
     self.viewOverlay.layer.cornerRadius = 5;
+}
 
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
     [self ticketCheckins];
 }
 
@@ -63,25 +70,16 @@
 {
     if(status == YES) {
         imgStatusIcon.image = [UIImage imageNamed:@"success"];
-        lblStatusTitle.text = @"SUCCESS";
-        lblStatusText.text = @"TICKET WITH THIS CODE HAS BEEN CHECKED";
+        lblStatusTitle.text = [defaults objectForKey:@"SUCCESS"];
+        lblStatusText.text = [defaults objectForKey: @"SUCCESS_MESSAGE"];
     } else {
         imgStatusIcon.image = [UIImage imageNamed:@"error"];
-        lblStatusTitle.text = @"ERROR";
-        lblStatusText.text = @"WRONG TICKET CODE";
+        lblStatusTitle.text = [defaults objectForKey:@"ERROR"];
+        lblStatusText.text = [defaults objectForKey:@"ERROR_MESSAGE"];
     }
     [self.viewOverlayWrapper setHidden:NO];
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 - (IBAction)checkin:(id)sender {
     
     NSString *requestedUrl = [NSString stringWithFormat:@"%@/check_in/%@?ct_json", [defaults stringForKey:@"baseUrl"], ticketData[@"checksum"]];
@@ -90,8 +88,14 @@
     [manager GET:requestedUrl parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
         
+//        NSLog(@"CHECKIN RESPONSE %@", responseObject);
+        
         [self ticketCheckins];
-        [self showOverlayWithStatus:YES];
+        if ([responseObject[@"status"] isEqualToNumber:@0]) {
+            [self showOverlayWithStatus:NO];
+        } else {
+            [self showOverlayWithStatus:YES];
+        }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
         [self showOverlayWithStatus:NO];
@@ -125,6 +129,14 @@
         UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
         cell.textLabel.font = [UIFont fontWithName:@"Montserrat-Regular" size:13];
         cell.textLabel.text = [NSString stringWithFormat:@"%@ - %@", checkinsArray[indexPath.row][@"data"][@"date_checked"], checkinsArray[indexPath.row][@"data"][@"status"]];
+        
+        if ([tableView respondsToSelector:@selector(layoutMargins)]) {
+            tableView.layoutMargins = UIEdgeInsetsZero;
+        }
+        if ([cell respondsToSelector:@selector(layoutMargins)]) {
+            cell.layoutMargins = UIEdgeInsetsZero;
+        }
+        
         return cell;
     } else {
         NSString *cellIdentifier = @"customFieldCell";
@@ -132,6 +144,16 @@
         
         ticketCell.lblKey.text = [customFieldsArray[indexPath.row] objectAtIndex:0];
         ticketCell.lblValue.text = [customFieldsArray[indexPath.row] objectAtIndex:1];
+        
+        
+        if ([tableView respondsToSelector:@selector(layoutMargins)]) {
+            tableView.layoutMargins = UIEdgeInsetsZero;
+        }
+        if ([ticketCell respondsToSelector:@selector(layoutMargins)]) {
+            ticketCell.layoutMargins = UIEdgeInsetsZero;
+        }
+        
+        
         
         return ticketCell;
     }
@@ -158,6 +180,7 @@
 -(void)ticketCheckins
 {
     NSString *requestedUrl = [NSString stringWithFormat:@"%@/ticket_checkins/%@?ct_json", [defaults stringForKey:@"baseUrl"], ticketData[@"checksum"]];
+//    NSLog(@"Details Request URL: %@", requestedUrl);
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:requestedUrl parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -165,13 +188,19 @@
         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
         
         checkinsArray = [[NSArray alloc] initWithArray:responseObject];
+        
+//        NSLog(@"CHECLKINS ARRAY %@", checkinsArray);
+//        NSLog(@"CHECKINS NUMBER %lu", (unsigned long)[checkinsArray count]);
+        
         [tblCheckins reloadData];
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"ERROR" message:@"There is a problem in loading your data" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        [alert show];
-
+        
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:[defaults objectForKey:@"ERROR"] message:[defaults objectForKey:@"ERROR_LOADING_DATA"] preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *okAction = [UIAlertAction actionWithTitle:[defaults objectForKey:@"OK"] style:UIAlertActionStyleDefault handler:nil];
+        [alert addAction:okAction];
+        [self presentViewController:alert animated:YES completion:nil];
     }];
 }
 

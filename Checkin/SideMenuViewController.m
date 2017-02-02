@@ -15,6 +15,9 @@
 
 @implementation SideMenuViewController {
     NSUserDefaults *defaults;
+    __weak IBOutlet UILabel *lblHome;
+    __weak IBOutlet UILabel *lblList;
+    __weak IBOutlet UILabel *lblSignOut;
 }
 
 - (void)viewDidLoad
@@ -25,6 +28,13 @@
         defaults = [NSUserDefaults standardUserDefaults];
     }
     
+    
+}
+- (void)viewWillAppear:(BOOL)animated
+{
+    lblHome.text = [defaults objectForKey:@"HOME_STATS"];
+    lblList.text = [defaults objectForKey:@"LIST"];
+    lblSignOut.text = [defaults objectForKey:@"SIGN_OUT"];
     self.lblEventTitle.text = [defaults stringForKey:@"eventName"];
     self.lblEventSubtitle.text = [defaults stringForKey:@"eventDateTime"];
 }

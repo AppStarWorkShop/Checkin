@@ -25,6 +25,7 @@
     NSMutableDictionary *checkinData;
     NSUserDefaults *defaults;
     BOOL checkinStatus;
+    __weak IBOutlet UINavigationItem *navItem;
 }
 @synthesize captureSession, videoPreviewLayer, viewPreview, audioPlayer, btnFlash, btnCancel, imgStatusIcon, lblStatusTitle, lblStatusText;
 
@@ -35,6 +36,9 @@
     if(!defaults) {
         defaults = [NSUserDefaults standardUserDefaults];
     }
+    
+    navItem.title = [defaults objectForKey:@"APP_TITLE"];
+    [btnCancel setTitle:[defaults objectForKey:@"CANCEL"] forState:UIControlStateNormal];
     
     supportedMetaTypes = @[
                    AVMetadataObjectTypeQRCode,
@@ -53,6 +57,11 @@
 
 -(void)viewDidAppear:(BOOL)animated {
     [self continueScanning];
+}
+
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    viewPreview.frame = self.view.bounds;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -108,7 +117,7 @@
     AVCaptureDeviceInput *deviceInput = [AVCaptureDeviceInput deviceInputWithDevice:captureDevice error:&error];
     
     if(!deviceInput) {
-        NSLog(@"%@", [error localizedDescription]);
+//        NSLog(@"%@", [error localizedDescription]);
         return NO;
     }
     
@@ -125,11 +134,17 @@
     
     videoPreviewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:captureSession];
     [videoPreviewLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
-    [videoPreviewLayer setFrame:viewPreview.layer.bounds];
+    videoPreviewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
+    videoPreviewLayer.bounds = self.view.bounds;
+    videoPreviewLayer.position = CGPointMake(CGRectGetMinX(self.view.bounds), CGRectGetMinY(self.view.bounds));
+    
+    videoPreviewLayer.frame = CGRectMake(0.0, 0.0, self.view.frame.size.width, self.view.frame.size.height);
+//    videoPreviewLayer.frame = viewPreview.layer.bounds;
     [viewPreview.layer addSublayer:videoPreviewLayer];
     
     [captureSession startRunning];
     
+        
     return YES;
 }
 
@@ -152,8 +167,8 @@
     
     audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:beepURL error:&error];
     if(error) {
-        NSLog(@"Could not load Beep file");
-        NSLog(@"%@", [error localizedDescription]);
+//        NSLog(@"Could not load Beep file");
+//        NSLog(@"%@", [error localizedDescription]);
     } else {
         [audioPlayer prepareToPlay];
     }
@@ -164,13 +179,13 @@
     checkinStatus = status;
     if(status == YES) {
         imgStatusIcon.image = [UIImage imageNamed:@"success"];
-        lblStatusTitle.text = @"SUCCESS";
-        lblStatusText.text = @"TICKET WITH THIS CODE HAS BEEN CHECKED";
+        lblStatusTitle.text = [defaults objectForKey:@"SUCCESS"];
+        lblStatusText.text = [defaults objectForKey: @"SUCCESS_MESSAGE"];
         
     } else {
         imgStatusIcon.image = [UIImage imageNamed:@"error"];
-        lblStatusTitle.text = @"ERROR";
-        lblStatusText.text = @"WRONG TICKET CODE";
+        lblStatusTitle.text = [defaults objectForKey: @"ERROR"];
+        lblStatusText.text = [defaults objectForKey:@"ERROR_MESSAGE"];
     }
     [self.viewOverlayWrapper setHidden:NO];
 }
@@ -192,18 +207,22 @@
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:requestedUrl parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+//        NSLog(@"%@", responseObject);
+        if([responseObject[@"status"] boolValue]) {
+            NSDateFormatter *printFormatter = [[NSDateFormatter alloc] init];
+            [printFormatter setDateFormat:@"dd.MM.yyyy"];
+            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+            [dateFormatter setLocale:[NSLocale localeWithLocaleIdentifier:@"en_GB"]];
+            [dateFormatter setDateFormat:@"MMMM dd, yyyy hh:mm a"];
+            NSDate *dateObj = [dateFormatter dateFromString:responseObject[@"payment_date"]];
+            
+            checkinData = [responseObject mutableCopy];
+            [checkinData setValue:[printFormatter stringFromDate:dateObj] forKey:@"date"];
+            [self showOverlayWithStatus:YES];
+        } else {
+            [self showOverlayWithStatus:NO];
+        }
         
-        NSDateFormatter *printFormatter = [[NSDateFormatter alloc] init];
-        [printFormatter setDateFormat:@"dd.MM.yyyy"];
-        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-        [dateFormatter setLocale:[NSLocale localeWithLocaleIdentifier:@"en_GB"]];
-        [dateFormatter setDateFormat:@"MMMM dd, yyyy hh:mm a"];
-        NSDate *dateObj = [dateFormatter dateFromString:responseObject[@"payment_date"]];
-        
-        checkinData = [responseObject mutableCopy];
-        [checkinData setValue:[printFormatter stringFromDate:dateObj] forKey:@"date"];
-        
-        [self showOverlayWithStatus:YES];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
         [self showOverlayWithStatus:NO];

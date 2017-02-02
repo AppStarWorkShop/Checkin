@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		4D99A34922881B67554124D8 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A33F09C38743F78536778FC /* libPods.a */; };
+		C514BBD41B37ED2A0041CD62 /* ListTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C514BBD21B37ED2A0041CD62 /* ListTableViewCell.m */; };
+		C514BBD51B37ED2A0041CD62 /* ListTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = C514BBD31B37ED2A0041CD62 /* ListTableViewCell.xib */; };
 		C55306C51A648AB2005833CF /* ScannerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C55306C41A648AB2005833CF /* ScannerViewController.m */; };
 		C55306C71A648CEE005833CF /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C55306C61A648CEE005833CF /* AVFoundation.framework */; };
 		C55306CD1A649941005833CF /* beep.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C55306CC1A649941005833CF /* beep.mp3 */; };
@@ -43,6 +45,9 @@
 		2E6211C958732C563CBD1B9F /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		4434B9EF17023B3D49FC831D /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		9A33F09C38743F78536778FC /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		C514BBD11B37ED2A0041CD62 /* ListTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListTableViewCell.h; sourceTree = "<group>"; };
+		C514BBD21B37ED2A0041CD62 /* ListTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListTableViewCell.m; sourceTree = "<group>"; };
+		C514BBD31B37ED2A0041CD62 /* ListTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ListTableViewCell.xib; sourceTree = "<group>"; };
 		C55306C31A648AB2005833CF /* ScannerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScannerViewController.h; sourceTree = "<group>"; };
 		C55306C41A648AB2005833CF /* ScannerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScannerViewController.m; sourceTree = "<group>"; };
 		C55306C61A648CEE005833CF /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -216,6 +221,9 @@
 				C55EC9E71A633501002C8860 /* CustomListCell.m */,
 				C5C3F65E1A686D6500E31940 /* TicketCustomFieldsTableViewCell.h */,
 				C5C3F65F1A686D6500E31940 /* TicketCustomFieldsTableViewCell.m */,
+				C514BBD11B37ED2A0041CD62 /* ListTableViewCell.h */,
+				C514BBD21B37ED2A0041CD62 /* ListTableViewCell.m */,
+				C514BBD31B37ED2A0041CD62 /* ListTableViewCell.xib */,
 			);
 			name = CustomCells;
 			sourceTree = "<group>";
@@ -271,6 +279,8 @@
 				TargetAttributes = {
 					C55EC9991A613EED002C8860 = {
 						CreatedOnToolsVersion = 6.1.1;
+						DevelopmentTeam = G9VDSGDM55;
+						ProvisioningStyle = Automatic;
 					};
 					C55EC9B21A613EEE002C8860 = {
 						CreatedOnToolsVersion = 6.1.1;
@@ -308,6 +318,7 @@
 				C55EC9A91A613EED002C8860 /* Main.storyboard in Resources */,
 				C55EC9CD1A617280002C8860 /* Media.xcassets in Resources */,
 				C55EC9AE1A613EED002C8860 /* LaunchScreen.xib in Resources */,
+				C514BBD51B37ED2A0041CD62 /* ListTableViewCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -367,6 +378,7 @@
 				C5C3F6601A686D6500E31940 /* TicketCustomFieldsTableViewCell.m in Sources */,
 				C55EC9A31A613EED002C8860 /* AppDelegate.m in Sources */,
 				C55EC9A01A613EED002C8860 /* main.m in Sources */,
+				C514BBD41B37ED2A0041CD62 /* ListTableViewCell.m in Sources */,
 				C55EC9C91A616E00002C8860 /* HomeViewController.m in Sources */,
 				C55306C51A648AB2005833CF /* ScannerViewController.m in Sources */,
 			);
@@ -427,7 +439,8 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Marko Miljus (74V7J2MY6S)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Marko Miljus (74V7J2MY6S)";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -444,7 +457,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -468,7 +481,8 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Marko Miljus (G9VDSGDM55)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Marko Miljus (G9VDSGDM55)";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -479,7 +493,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -492,9 +506,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = G9VDSGDM55;
 				INFOPLIST_FILE = Checkin/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Debug;
 		};
@@ -505,9 +524,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Marko Miljus (G9VDSGDM55)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = G9VDSGDM55;
 				INFOPLIST_FILE = Checkin/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Release;
 		};
