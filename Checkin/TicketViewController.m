@@ -10,6 +10,7 @@
 #import "TicketCustomFieldsTableViewCell.h"
 #import <MBProgressHUD/MBProgressHUD.h>
 #import <AFNetworking/AFNetworking.h>
+#import "AFHTTPSessionManager+RetryPolicy.h"
 
 @interface TicketViewController ()
 
@@ -99,8 +100,9 @@
     } failure:^(NSURLSessionTask *task, NSError *error) {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
         [self showOverlayWithStatus:NO];
-    }];
+    } retryCount:5 retryInterval:1.0 progressive:false fatalStatusCodes:@[@401, @403]];
 }
+
 - (IBAction)back:(id)sender {
         [self dismissViewControllerAnimated:YES completion:nil];
 }
@@ -153,8 +155,6 @@
             ticketCell.layoutMargins = UIEdgeInsetsZero;
         }
         
-        
-        
         return ticketCell;
     }
 }
@@ -180,28 +180,19 @@
 -(void)ticketCheckins
 {
     NSString *requestedUrl = [NSString stringWithFormat:@"%@/ticket_checkins/%@?ct_json", [defaults stringForKey:@"baseUrl"], ticketData[@"checksum"]];
-//    NSLog(@"Details Request URL: %@", requestedUrl);
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     [manager GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
-        
         [MBProgressHUD hideHUDForView:self.view animated:YES];
-        
         checkinsArray = [[NSArray alloc] initWithArray:responseObject];
-        
-//        NSLog(@"CHECLKINS ARRAY %@", checkinsArray);
-//        NSLog(@"CHECKINS NUMBER %lu", (unsigned long)[checkinsArray count]);
-        
         [tblCheckins reloadData];
-        
     } failure:^(NSURLSessionTask *task, NSError *error) {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
-        
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:[defaults objectForKey:@"ERROR"] message:[defaults objectForKey:@"ERROR_LOADING_DATA"] preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction *okAction = [UIAlertAction actionWithTitle:[defaults objectForKey:@"OK"] style:UIAlertActionStyleDefault handler:nil];
         [alert addAction:okAction];
         [self presentViewController:alert animated:YES completion:nil];
-    }];
+    } retryCount:5 retryInterval:1.0 progressive:false fatalStatusCodes:@[@401, @403]];
 }
 
 @end

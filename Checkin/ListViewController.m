@@ -13,6 +13,8 @@
 #import "TicketViewController.h"
 #import <MBProgressHUD/MBProgressHUD.h>
 #import <AFNetworking/AFNetworking.h>
+#import "UIScrollView+InfiniteScroll.h"
+#import "AFHTTPSessionManager+RetryPolicy.h"
 
 @interface ListViewController ()
 @end
@@ -26,9 +28,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
-    
-//    listItems = [NSArray array];
+
     if(!defaults) {
         defaults = [NSUserDefaults standardUserDefaults];
     }
@@ -49,12 +49,75 @@
     
     [tblTickets registerNib:[UINib nibWithNibName:@"ListTableViewCell" bundle:nil] forCellReuseIdentifier:@"cellIdentifier"];
     
-    [self loadTicketsList];
+    listItems = [NSMutableArray array];
+    self.currentPage = 1;
+    self.showInfinite = YES;
+    
+    __weak typeof(self) weakSelf = self;
+
+    // Set custom indicator margin
+    self.tblTickets.infiniteScrollIndicatorMargin = 40;
+    // Set custom trigger offset
+    self.tblTickets.infiniteScrollTriggerOffset = 200;
+    
+    [self.tblTickets addInfiniteScrollWithHandler:^(UITableView *tableView) {
+        [weakSelf fetchTickets:^{
+            [tableView finishInfiniteScroll];
+        }];
+    }];
+    
+    [self.tblTickets setShouldShowInfiniteScrollHandler:^BOOL(UIScrollView * _Nonnull scrollView) {
+        // Only show up to 5 pages then prevent the infinite scroll
+        return self.showInfinite;
+    }];
+    
+//    [self loadTicketsList];
+ 
+    [self.tblTickets beginInfiniteScroll:YES];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)fetchTickets:(void(^)(void))completion {
+    NSInteger itemsPerPage = 50;
+    NSString *requestedUrl = [NSString stringWithFormat:@"%@/tickets_info/%ld/%ld/?ct_json", [defaults stringForKey:@"baseUrl"], itemsPerPage, self.currentPage];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    [manager GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
+        unsigned int i;
+        
+        if ([responseObject count] > 0) {
+            NSMutableArray *dataObject = [responseObject mutableCopy];
+            [dataObject removeObjectAtIndex:[responseObject count]-1];
+            if([dataObject count] == itemsPerPage) {
+                self.currentPage += 1;
+                self.showInfinite = YES;
+            } else {
+                self.showInfinite = NO;
+            }
+            
+            for (i=0; i < [dataObject count]-1; i++) {
+                NSMutableDictionary *tempData = [dataObject objectAtIndex:i];
+                NSMutableDictionary *tempObj = [tempData[@"data"] mutableCopy];
+                
+                [tempObj setValue:[NSString stringWithFormat:@"%@ %@", tempObj[@"buyer_first"], tempObj[@"buyer_last"]] forKey:@"name"];
+                [listItems addObject:tempObj];
+                    
+            }
+        }
+        [tblTickets reloadData];
+        if(completion) {
+            completion();
+        }
+    } failure:^(NSURLSessionTask *task, NSError *error) {
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:[defaults objectForKey:@"ERROR"] message:[defaults objectForKey:@"ERROR_LOADING_DATA"] preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *okAction = [UIAlertAction actionWithTitle:[defaults objectForKey:@"OK"] style:UIAlertActionStyleDefault handler:nil];
+                [alert addAction:okAction];
+                [self presentViewController:alert animated:YES completion:nil];
+        } retryCount:5 retryInterval:1.0 progressive:false fatalStatusCodes:@[@401, @403]];
+//            [[UIApplication sharedApplication] stopNetworkActivity];
 }
 
 #pragma mark - Table methods
@@ -126,36 +189,6 @@
 //    if (tableView == self.searchDisplayController.searchResultsTableView) {
         [self performSegueWithIdentifier:@"showDetails" sender:nil];
 //    }
-}
-
--(void)loadTicketsList
-{
-    NSString *requestedUrl = [NSString stringWithFormat:@"%@/tickets_info/%@/1/?ct_json", [defaults stringForKey:@"baseUrl"], [defaults stringForKey:@"soldTickets"]];
-//NSLog(@"REquest %@", requestedUrl);
-    [MBProgressHUD showHUDAddedTo:tblTickets animated:YES];
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-    [manager GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
-        [MBProgressHUD hideHUDForView:tblTickets animated:YES];
-        listItems = [NSMutableArray array];
-        unsigned int i;
-        if ([responseObject count] > 0) {
-            for (i=0; i < [responseObject count]-1; i++) {
-                NSMutableDictionary *tempData = [responseObject objectAtIndex:i];
-                NSMutableDictionary *tempObj = [tempData[@"data"] mutableCopy];
-
-                [tempObj setValue:[NSString stringWithFormat:@"%@ %@", tempObj[@"buyer_first"], tempObj[@"buyer_last"]] forKey:@"name"];
-                [listItems addObject:tempObj];
-            }
-        }
-        [tblTickets reloadData];
-    } failure:^(NSURLSessionTask *task, NSError *error) {
-        [MBProgressHUD hideHUDForView:tblTickets animated:YES];
-        
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:[defaults objectForKey:@"ERROR"] message:[defaults objectForKey:@"ERROR_LOADING_DATA"] preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction *okAction = [UIAlertAction actionWithTitle:[defaults objectForKey:@"OK"] style:UIAlertActionStyleDefault handler:nil];
-        [alert addAction:okAction];
-        [self presentViewController:alert animated:YES completion:nil];
-    }];
 }
 
 #pragma mark - Search

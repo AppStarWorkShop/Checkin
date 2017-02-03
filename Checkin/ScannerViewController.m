@@ -10,6 +10,7 @@
 #import "TicketViewController.h"
 #import <AFNetworking/AFNetworking.h>
 #import <MBProgressHUD/MBProgressHUD.h>
+#import "AFHTTPSessionManager+RetryPolicy.h"
 
 @interface ScannerViewController ()
     @property (nonatomic, strong) AVCaptureSession *captureSession;
@@ -117,7 +118,6 @@
     AVCaptureDeviceInput *deviceInput = [AVCaptureDeviceInput deviceInputWithDevice:captureDevice error:&error];
     
     if(!deviceInput) {
-//        NSLog(@"%@", [error localizedDescription]);
         return NO;
     }
     

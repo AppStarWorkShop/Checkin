@@ -27,8 +27,6 @@
     if(!defaults) {
         defaults = [NSUserDefaults standardUserDefaults];
     }
-    
-    
 }
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -47,7 +45,6 @@
 
 -(void)updateLabelsWithTitle:(NSString*)title andSubtitle:(NSString*)subtitle
 {
-    NSLog(@"pozvan");
 }
 
 #pragma mark - Navigation

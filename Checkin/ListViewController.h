@@ -12,4 +12,7 @@
 
 @property (weak, nonatomic) IBOutlet UITableView *tblTickets;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *btnBurger;
+
+@property (nonatomic) NSInteger currentPage;
+@property (nonatomic) BOOL showInfinite;
 @end

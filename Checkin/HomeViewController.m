@@ -11,6 +11,7 @@
 #import "SideMenuViewController.h"
 #import <AFNetworking/AFNetworking.h>
 #import <MBProgressHUD/MBProgressHUD.h>
+#import "AFHTTPSessionManager+RetryPolicy.h"
 
 @interface HomeViewController ()
 
@@ -108,7 +109,7 @@
         UIAlertAction *okAction = [UIAlertAction actionWithTitle:[defaults objectForKey:@"OK"] style:UIAlertActionStyleDefault handler:nil];
         [alert addAction:okAction];
         [self presentViewController:alert animated:YES completion:nil];
-    }];
+    } retryCount:5 retryInterval:1.0 progressive:false fatalStatusCodes:@[@401,@403]];
 }
 
 @end

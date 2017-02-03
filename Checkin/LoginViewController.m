@@ -9,6 +9,7 @@
 #import "LoginViewController.h"
 #import <AFNetworking/AFNetworking.h>
 #import <MBProgressHUD/MBProgressHUD.h>
+#import "AFHTTPSessionManager+RetryPolicy.h"
 
 @interface LoginViewController ()
 
@@ -75,7 +76,6 @@
 
 - (IBAction)login:(id)sender
 {
-//    NSError *jsonError;
     if([self inputValid]) {
         NSString *url = txtUrl.text;
         NSString *apiKey = txtApiKey.text;
@@ -97,7 +97,6 @@
         AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
         manager.securityPolicy.allowInvalidCertificates = YES;
         manager.securityPolicy.validatesDomainName = NO;
-//        [manager.securityPolicy setAllowInvalidCertificates:YES];
         [manager GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
             [MBProgressHUD hideHUDForView:self.view animated:YES];
             
@@ -148,7 +147,7 @@
                         [defaults setBool:YES forKey:@"custom_translations"];
                         [defaults synchronize];
                     }
-                }failure:^(NSURLSessionTask *task, NSError *error) {}];
+                }failure:^(NSURLSessionTask *task, NSError *error) {} retryCount:5 retryInterval:1.0 progressive:false fatalStatusCodes:@[@401,@403]];
                 
                 // check for license key
                 if([responseObject objectForKey:@"tc_iw_is_pr"] != nil && [responseObject[@"tc_iw_is_pr"] boolValue] == YES) {
@@ -179,7 +178,7 @@
                             [defaults setBool:NO forKey:@"logged"];
                         }
                         
-                    }];
+                    } retryCount:5 retryInterval:1.0 progressive:false fatalStatusCodes:@[@401,@403]];
                 } else {
                     [self dismissViewControllerAnimated:YES completion:nil];
                 }
@@ -196,13 +195,11 @@
             
         } failure:^(NSURLSessionTask *task, NSError *error) {
             [MBProgressHUD hideHUDForView:self.view animated:YES];
-//            NSLog(@"ERROR %@", error);
             UIAlertController *alert = [UIAlertController alertControllerWithTitle:[defaults objectForKey:@"ERROR"] message:[defaults stringForKey:@"ERROR_LOADING_DATA"] preferredStyle:UIAlertControllerStyleAlert];
             UIAlertAction *okAction = [UIAlertAction actionWithTitle:[defaults objectForKey:@"OK"] style:UIAlertActionStyleDefault handler:nil];
             [alert addAction:okAction];
             [self presentViewController:alert animated:YES completion:nil];
-        }];
-        
+        } retryCount:5 retryInterval:1.0 progressive:false fatalStatusCodes:@[@401,@403]];
     }
 }
 
