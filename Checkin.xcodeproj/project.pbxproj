@@ -280,7 +280,7 @@
 				TargetAttributes = {
 					C55EC9991A613EED002C8860 = {
 						CreatedOnToolsVersion = 6.1.1;
-						DevelopmentTeam = G9VDSGDM55;
+						DevelopmentTeam = Y26L3GTLDL;
 						ProvisioningStyle = Automatic;
 					};
 					C55EC9B21A613EEE002C8860 = {
@@ -524,9 +524,10 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = G9VDSGDM55;
+				DEVELOPMENT_TEAM = Y26L3GTLDL;
 				INFOPLIST_FILE = Checkin/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pacmobile.ticketyoyotest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -541,9 +542,10 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Marko Miljus (G9VDSGDM55)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = G9VDSGDM55;
+				DEVELOPMENT_TEAM = Y26L3GTLDL;
 				INFOPLIST_FILE = Checkin/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pacmobile.ticketyoyotest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
