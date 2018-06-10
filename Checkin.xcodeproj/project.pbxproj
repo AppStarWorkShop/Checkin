@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		9E3B640ECEFC12CAC70C383F /* libPods-Checkin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DE0ED67A72DF268382CE9C26 /* libPods-Checkin.a */; };
+		BD80BCD520CC09D300069CB6 /* LandingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BD80BCD420CC09D300069CB6 /* LandingViewController.m */; };
 		C514BBD41B37ED2A0041CD62 /* ListTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C514BBD21B37ED2A0041CD62 /* ListTableViewCell.m */; };
 		C514BBD51B37ED2A0041CD62 /* ListTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = C514BBD31B37ED2A0041CD62 /* ListTableViewCell.xib */; };
 		C55306C51A648AB2005833CF /* ScannerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C55306C41A648AB2005833CF /* ScannerViewController.m */; };
@@ -44,6 +45,8 @@
 /* Begin PBXFileReference section */
 		3934FB6255E3333A36D940F1 /* Pods-Checkin.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Checkin.release.xcconfig"; path = "Pods/Target Support Files/Pods-Checkin/Pods-Checkin.release.xcconfig"; sourceTree = "<group>"; };
 		4C6DA4F1999AAEF3B24118E0 /* Pods-Checkin.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Checkin.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Checkin/Pods-Checkin.debug.xcconfig"; sourceTree = "<group>"; };
+		BD80BCD320CC09D300069CB6 /* LandingViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LandingViewController.h; sourceTree = "<group>"; };
+		BD80BCD420CC09D300069CB6 /* LandingViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LandingViewController.m; sourceTree = "<group>"; };
 		C514BBD11B37ED2A0041CD62 /* ListTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListTableViewCell.h; sourceTree = "<group>"; };
 		C514BBD21B37ED2A0041CD62 /* ListTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListTableViewCell.m; sourceTree = "<group>"; };
 		C514BBD31B37ED2A0041CD62 /* ListTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ListTableViewCell.xib; sourceTree = "<group>"; };
@@ -163,6 +166,8 @@
 				C55EC9ED1A63E4FD002C8860 /* LoginViewController.m */,
 				C55306C31A648AB2005833CF /* ScannerViewController.h */,
 				C55306C41A648AB2005833CF /* ScannerViewController.m */,
+				BD80BCD320CC09D300069CB6 /* LandingViewController.h */,
+				BD80BCD420CC09D300069CB6 /* LandingViewController.m */,
 			);
 			path = Checkin;
 			sourceTree = "<group>";
@@ -388,6 +393,7 @@
 				C55EC9DF1A62CAA1002C8860 /* SWRevealViewController.m in Sources */,
 				C55EC9D01A617550002C8860 /* SideMenuViewController.m in Sources */,
 				C55EC9E81A633501002C8860 /* CustomListCell.m in Sources */,
+				BD80BCD520CC09D300069CB6 /* LandingViewController.m in Sources */,
 				C55EC9EB1A63B677002C8860 /* TicketViewController.m in Sources */,
 				C55EC9E21A631DE2002C8860 /* ListViewController.m in Sources */,
 				C55EC9EE1A63E4FD002C8860 /* LoginViewController.m in Sources */,
@@ -527,10 +533,11 @@
 				DEVELOPMENT_TEAM = Y26L3GTLDL;
 				INFOPLIST_FILE = Checkin/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.pacmobile.ticketyoyotest;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pacmobile.ticketyoyo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Debug;
 		};
@@ -545,10 +552,11 @@
 				DEVELOPMENT_TEAM = Y26L3GTLDL;
 				INFOPLIST_FILE = Checkin/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.pacmobile.ticketyoyotest;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pacmobile.ticketyoyo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Release;
 		};

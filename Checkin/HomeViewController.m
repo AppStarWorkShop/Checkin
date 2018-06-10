@@ -22,7 +22,7 @@
     __weak IBOutlet UILabel *lblSoldTickets;
     __weak IBOutlet UILabel *lblCheckedIn;
 }
-@synthesize btnBurger;
+@synthesize btnBurger, btnSearch;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -37,6 +37,10 @@
         [btnBurger setTarget: self.revealViewController];
         [btnBurger setAction: @selector( revealToggle: )];
         [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
+        
+       // [btnSearch setTarget: self.revealViewController];
+        //[btnSearch setAction: @selector( revealToggle: )];
+        
     }
     
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
@@ -50,13 +54,38 @@
     lblSoldTickets.text = @"";
     lblSoldTickets.transform = CGAffineTransformMakeRotation(3.14/2);
     lblCheckedIn.transform = CGAffineTransformMakeRotation(3.14/2);
+    
+    if( [[defaults objectForKey:@"workShopNumber"] integerValue] == 1 ){
+        self.workShopCover.image = [UIImage imageNamed:@"bg_ws01.png"];
+        self.workShopTitle.text = @"工作坊//#1 - 化石 + 抱抱恐龍BB";
+        
+    }else if( [[defaults objectForKey:@"workShopNumber"] integerValue] == 2 ){
+        self.workShopCover.image = [UIImage imageNamed:@"bg_ws02.png"];
+        self.workShopTitle.text = @"工作坊//#2 - 化石 + 抱抱恐龍BB";
+        
+    }else{
+        self.workShopCover.image = [UIImage imageNamed:@"bg_ws03.png"];
+        self.workShopTitle.text = @"工作坊//#3 - 化石 + 抱抱恐龍BB";
+        
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     lblCheckedIn.text = [defaults objectForKey:@"CHECKED_IN_TICKETS"];
     lblSoldTickets.text = [defaults objectForKey:@"SOLD_TICKETS"];
-    self.navigationItem.title = [defaults objectForKey:@"APP_TITLE"];
+    //self.navigationItem.title = [defaults objectForKey:@"APP_TITLE"];
+    
+    UINavigationBar *nav = self.navigationController.navigationBar;
+    [nav setBarStyle:UIBarStyleBlack];
+    [nav setTintColor:UIColor.yellowColor];
+    
+    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 124, 28)];
+    [imageView setContentMode:UIViewContentModeScaleToFill];
+    
+    imageView.image = [UIImage imageNamed:@"ic_top_logo.png"];
+    
+    self.navigationItem.titleView = imageView;
     
     [self checkLogin];
 }
@@ -78,10 +107,18 @@
 - (void)checkLogin
 {
     if(![defaults boolForKey:@"logged"]) {
-        [self performSegueWithIdentifier:@"showLogin" sender:self];
+        [self performSegueWithIdentifier:@"showLanding" sender:self];
     } else {
         [self eventDetails];
     }
+    
+    /*
+    if(![defaults boolForKey:@"logged"]) {
+        [self performSegueWithIdentifier:@"showLogin" sender:self];
+    } else {
+        [self eventDetails];
+    }*/
+    
 }
 
 -(void)eventDetails
@@ -110,6 +147,12 @@
         [alert addAction:okAction];
         [self presentViewController:alert animated:YES completion:nil];
     } retryCount:5 retryInterval:1.0 progressive:false fatalStatusCodes:@[@401,@403]];
+}
+
+- (IBAction)btnSearchOnClick:(UIBarButtonItem *)sender {
+    __weak HomeViewController *theSelf = self;
+    [theSelf performSegueWithIdentifier:@"showTicketList" sender:theSelf];
+    
 }
 
 @end

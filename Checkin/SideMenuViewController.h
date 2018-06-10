@@ -17,5 +17,10 @@
 @property (strong, nonatomic) NSString *locTitle;
 @property (strong, nonatomic) NSString *locSubtitle;
 
+@property (weak, nonatomic) IBOutlet UIButton *workShopMenu1;
+@property (weak, nonatomic) IBOutlet UIButton *workShopMenu2;
+@property (weak, nonatomic) IBOutlet UIButton *workShopMenu3;
+
+
 @end
 

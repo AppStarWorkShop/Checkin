@@ -49,6 +49,22 @@
 
 #pragma mark - Navigation
 
+- (IBAction)workShopMenuOnClick:(UIButton *)sender {
+
+    if( sender.tag == 1 ){
+        [defaults setInteger:1 forKey:@"workShopNumber"];
+        
+    } else if( sender.tag == 2 ){
+        [defaults setInteger:2 forKey:@"workShopNumber"];
+        
+    }else{
+        [defaults setInteger:3 forKey:@"workShopNumber"];
+        
+    }
+    
+    [self performSegueWithIdentifier:@"switchWorkShop" sender:self];
+}
+
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {

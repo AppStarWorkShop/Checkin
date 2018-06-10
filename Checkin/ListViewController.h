@@ -11,8 +11,8 @@
 @interface ListViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, UISearchDisplayDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tblTickets;
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *btnBurger;
+//@property (weak, nonatomic) IBOutlet UIBarButtonItem *btnBurger;
 
-@property (nonatomic) NSInteger currentPage;
-@property (nonatomic) BOOL showInfinite;
+//@property (weak, nonatomic) NSInteger currentPage;
+//@property (weak, nonatomic) BOOL showInfinite;
 @end

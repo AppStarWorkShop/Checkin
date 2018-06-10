@@ -24,17 +24,17 @@
     NSArray *searchResults;
     NSUserDefaults *defaults;
 }
-@synthesize btnBurger, tblTickets;
+@synthesize /*btnBurger,*/ tblTickets;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
+/*
     if(!defaults) {
         defaults = [NSUserDefaults standardUserDefaults];
     }
     
     self.navigationItem.title = [defaults objectForKey:@"APP_TITLE"];
-    
+    /*
     SWRevealViewController *revealViewController = self.revealViewController;
     if ( revealViewController )
     {
@@ -42,7 +42,7 @@
         [btnBurger setAction: @selector( revealToggle: )];
         [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
     }
-    
+    */
     searchResults = [NSArray array];
     
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
@@ -50,8 +50,12 @@
     [tblTickets registerNib:[UINib nibWithNibName:@"ListTableViewCell" bundle:nil] forCellReuseIdentifier:@"cellIdentifier"];
     
     listItems = [NSMutableArray array];
+    /*
     self.currentPage = 1;
     self.showInfinite = YES;
+    */
+    [defaults setInteger:1 forKey:@"currentPage"];
+    [defaults setBool:YES forKey:@"showInfinite"];
     
     __weak typeof(self) weakSelf = self;
 
@@ -68,7 +72,7 @@
     
     [self.tblTickets setShouldShowInfiniteScrollHandler:^BOOL(UIScrollView * _Nonnull scrollView) {
         // Only show up to 5 pages then prevent the infinite scroll
-        return self.showInfinite;
+        return [[defaults objectForKey:@"showInfinite"] boolValue];//self.showInfinite;
     }];
     
 //    [self loadTicketsList];
@@ -83,7 +87,8 @@
 
 - (void)fetchTickets:(void(^)(void))completion {
     NSInteger itemsPerPage = 50;
-    NSString *requestedUrl = [NSString stringWithFormat:@"%@/tickets_info/%ld/%ld/?ct_json", [defaults stringForKey:@"baseUrl"], itemsPerPage, self.currentPage];
+    NSInteger currentPage = [[defaults objectForKey:@"currentPage"] integerValue];
+    NSString *requestedUrl = [NSString stringWithFormat:@"%@/tickets_info/%ld/%ld/?ct_json", [defaults stringForKey:@"baseUrl"], itemsPerPage, currentPage];
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     [manager GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
         unsigned int i;
@@ -92,10 +97,14 @@
             NSMutableArray *dataObject = [responseObject mutableCopy];
             [dataObject removeObjectAtIndex:[responseObject count]-1];
             if([dataObject count] == itemsPerPage) {
-                self.currentPage += 1;
-                self.showInfinite = YES;
+                NSInteger currentPage = [[defaults objectForKey:@"currentPage"] integerValue];
+                currentPage += 1;
+                [defaults setInteger:currentPage forKey:@"currentPage"];
+                [defaults setBool:YES forKey:@"showInfinite"];
+                
             } else {
-                self.showInfinite = NO;
+                [defaults setBool:NO forKey:@"showInfinite"];
+
             }
             
             for (i=0; i < [dataObject count]-1; i++) {
@@ -227,5 +236,15 @@
         ticketVC.ticketData = ticketDict;
     }
 }
+/*
+- (IBAction)closeBtnOnClick:(UIBarButtonItem *)sender {
+    [self dismissViewControllerAnimated:YES completion:nil];
+    //[self.navigationController popViewControllerAnimated:YES];
+    
+}*/
+- (IBAction)close:(UIButton *)sender {
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
 
 @end
