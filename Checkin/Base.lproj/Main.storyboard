@@ -303,16 +303,49 @@
                         <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <searchBar contentMode="redraw" misplaced="YES" text="" translatesAutoresizingMaskIntoConstraints="NO" id="Eg0-EQ-kaC">
-                                <rect key="frame" x="4" y="21" width="760" height="56"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="bg" translatesAutoresizingMaskIntoConstraints="NO" id="Y1x-ey-ThE">
+                                <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ubf-N8-jnZ">
+                                <rect key="frame" x="0.0" y="0.0" width="768" height="147"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mnp-VL-UZe">
+                                        <rect key="frame" x="740" y="28" width="16" height="22"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <state key="normal" image="ic_top_close"/>
+                                        <connections>
+                                            <action selector="close:" destination="hqm-4f-OBM" eventType="touchUpInside" id="7JH-vK-RDm"/>
+                                        </connections>
+                                    </button>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="ic_top_search" translatesAutoresizingMaskIntoConstraints="NO" id="e73-HI-xO4">
+                                        <rect key="frame" x="324" y="29" width="20" height="20"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="門票搜尋" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="r9A-Ji-eu9">
+                                        <rect key="frame" x="352" y="27" width="120" height="25"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                                        <color key="textColor" red="0.99607843139999996" green="0.8980392157" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" red="0.2156862745" green="0.2156862745" blue="0.2156862745" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </view>
+                            <searchBar contentMode="redraw" fixedFrame="YES" text="" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Eg0-EQ-kaC">
+                                <rect key="frame" x="0.0" y="72" width="768" height="56"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="barTintColor" red="0.2156862745" green="0.2156862745" blue="0.2156862745" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <textInputTraits key="textInputTraits"/>
                                 <connections>
                                     <outlet property="delegate" destination="hqm-4f-OBM" id="p8I-g1-lp2"/>
                                 </connections>
                             </searchBar>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="65" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="lrw-pu-d5g">
-                                <rect key="frame" x="4" y="76" width="760" height="889"/>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="65" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="lrw-pu-d5g">
+                                <rect key="frame" x="0.0" y="147" width="768" height="759"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 <connections>
@@ -320,45 +353,23 @@
                                     <outlet property="delegate" destination="hqm-4f-OBM" id="PII-hd-NRL"/>
                                 </connections>
                             </tableView>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bottom_bar" translatesAutoresizingMaskIntoConstraints="NO" id="6qr-4l-NXU">
-                                <rect key="frame" x="0.0" y="965" width="768" height="59"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="59" id="dEQ-Zi-xE6"/>
-                                </constraints>
-                            </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="23T-QO-BTj">
-                                <rect key="frame" x="341.5" y="919" width="85" height="85"/>
-                                <state key="normal" image="camera">
-                                    <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                </state>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="23T-QO-BTj">
+                                <rect key="frame" x="152" y="920" width="463" height="82"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.2156862745" green="0.2156862745" blue="0.2156862745" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="21"/>
+                                <state key="normal" title="  掃描門票" image="ic_btn_scan"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="40"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
                                 <connections>
                                     <segue destination="x36-Xj-okA" kind="presentation" id="TWV-u8-QS0"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mnp-VL-UZe">
-                                <rect key="frame" x="616" y="979" width="46" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Button"/>
-                                <connections>
-                                    <action selector="close:" destination="hqm-4f-OBM" eventType="touchUpInside" id="7JH-vK-RDm"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <constraints>
-                            <constraint firstItem="eEY-2x-6Yc" firstAttribute="top" secondItem="23T-QO-BTj" secondAttribute="bottom" constant="20" id="4qf-oU-Wnc"/>
-                            <constraint firstItem="Eg0-EQ-kaC" firstAttribute="top" secondItem="Ova-M7-Cda" secondAttribute="bottom" id="ACD-Xf-QzF"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="Eg0-EQ-kaC" secondAttribute="trailing" constant="-16" id="EzM-HP-Lgl"/>
-                            <constraint firstItem="lrw-pu-d5g" firstAttribute="top" secondItem="Eg0-EQ-kaC" secondAttribute="bottom" id="QWh-Az-anA"/>
-                            <constraint firstAttribute="centerX" secondItem="23T-QO-BTj" secondAttribute="centerX" id="R59-9f-XdY"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="lrw-pu-d5g" secondAttribute="trailing" constant="-16" id="fnw-Nb-Fjt"/>
-                            <constraint firstItem="eEY-2x-6Yc" firstAttribute="top" secondItem="6qr-4l-NXU" secondAttribute="bottom" id="hKD-Kz-xSb"/>
-                            <constraint firstItem="6qr-4l-NXU" firstAttribute="top" secondItem="lrw-pu-d5g" secondAttribute="bottom" id="hog-id-0oN"/>
-                            <constraint firstItem="6qr-4l-NXU" firstAttribute="leading" secondItem="eSo-Zg-yRL" secondAttribute="leading" id="jNU-Ey-dwO"/>
-                            <constraint firstItem="lrw-pu-d5g" firstAttribute="leading" secondItem="eSo-Zg-yRL" secondAttribute="leadingMargin" constant="-16" id="jrS-1H-sLT"/>
-                            <constraint firstItem="Eg0-EQ-kaC" firstAttribute="leading" secondItem="eSo-Zg-yRL" secondAttribute="leadingMargin" constant="-16" id="lqx-gB-WPK"/>
-                            <constraint firstAttribute="trailing" secondItem="6qr-4l-NXU" secondAttribute="trailing" id="oE9-ZN-WDo"/>
-                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="XcG-8H-rjv">
                         <barButtonItem key="rightBarButtonItem" title="Item" image="ic_top_close" id="9Yw-l5-pTf">
@@ -385,7 +396,7 @@
                     </connections>
                 </searchDisplayController>
             </objects>
-            <point key="canvasLocation" x="909" y="108"/>
+            <point key="canvasLocation" x="908.59375" y="107.8125"/>
         </scene>
         <!--Ticket View Controller-->
         <scene sceneID="qqC-D0-2JO">
@@ -1393,7 +1404,6 @@
         <image name="bg_ws03" width="406" height="170"/>
         <image name="bottom_bar" width="5" height="54"/>
         <image name="bullet" width="5" height="5"/>
-        <image name="camera" width="85" height="85"/>
         <image name="gray_box" width="95" height="89"/>
         <image name="gray_dark" width="80" height="80"/>
         <image name="ic_btm_sponlogo" width="103" height="19"/>

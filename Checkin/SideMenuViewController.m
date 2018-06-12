@@ -53,13 +53,27 @@
 
     if( sender.tag == 1 ){
         [defaults setInteger:1 forKey:@"workShopNumber"];
+        [defaults setBool:YES forKey:@"logged"];
+        [defaults setValue:@"https://shopsolndemo.com/" forKey:@"apiUrl"];
+        [defaults setValue:@"315D1804" forKey:@"apiKey"];
+        
+        //[self login];
         
     } else if( sender.tag == 2 ){
         [defaults setInteger:2 forKey:@"workShopNumber"];
+        [defaults setBool:YES forKey:@"logged"];
+        [defaults setValue:@"https://shopsolndemo.com/" forKey:@"apiUrl"];
+        [defaults setValue:@"315D1804" forKey:@"apiKey"];
+        
+        //[self login];
         
     }else{
         [defaults setInteger:3 forKey:@"workShopNumber"];
+        [defaults setBool:YES forKey:@"logged"];
+        [defaults setValue:@"https://shopsolndemo.com/" forKey:@"apiUrl"];
+        [defaults setValue:@"315D1804" forKey:@"apiKey"];
         
+        //[self login];
     }
     
     [self performSegueWithIdentifier:@"switchWorkShop" sender:self];
@@ -77,6 +91,5 @@
         [defaults synchronize];
     }
 }
-
 
 @end

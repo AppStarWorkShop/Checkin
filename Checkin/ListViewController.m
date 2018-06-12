@@ -28,7 +28,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-/*
+
     if(!defaults) {
         defaults = [NSUserDefaults standardUserDefaults];
     }
@@ -69,7 +69,7 @@
             [tableView finishInfiniteScroll];
         }];
     }];
-    
+
     [self.tblTickets setShouldShowInfiniteScrollHandler:^BOOL(UIScrollView * _Nonnull scrollView) {
         // Only show up to 5 pages then prevent the infinite scroll
         return [[defaults objectForKey:@"showInfinite"] boolValue];//self.showInfinite;

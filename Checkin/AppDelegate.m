@@ -25,7 +25,8 @@
                                                            [UIColor whiteColor], NSForegroundColorAttributeName,
                                                            [UIFont fontWithName:@"Montserrat-Bold" size:12.0], NSFontAttributeName, nil]];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-
+    [defaults setBool:NO forKey:@"logged"];
+    
     if(![defaults boolForKey:@"custom_translations"]) {
         [defaults setValue:@"WORDPRESS INSTALLATION URL" forKey:@"WORDPRESS_INSTALLATION_URL"];
         [defaults setValue:@"API KEY" forKey:@"API_KEY"];
@@ -81,9 +82,9 @@
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    if(![defaults boolForKey:@"autoLogin"]) {
+    //if(![defaults boolForKey:@"autoLogin"]) {
         [defaults setBool:NO forKey:@"logged"];
-    }
+    //}
 }
 
 @end
