@@ -10,6 +10,7 @@
 #import <AFNetworking/AFNetworking.h>
 #import <MBProgressHUD/MBProgressHUD.h>
 #import "AFHTTPSessionManager+RetryPolicy.h"
+#import "yoyoAFHTTPSessionManager.h"
 
 @interface LoginViewController ()
 
@@ -94,7 +95,7 @@
         }
         NSLog(@"URL: %@", requestedUrl);
         
-        AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+        AFHTTPSessionManager *manager = [yoyoAFHTTPSessionManager sharedManager];//[AFHTTPSessionManager manager];
         manager.securityPolicy.allowInvalidCertificates = YES;
         manager.securityPolicy.validatesDomainName = NO;
         [manager GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {

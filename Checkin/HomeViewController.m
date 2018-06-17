@@ -12,6 +12,7 @@
 #import <AFNetworking/AFNetworking.h>
 #import <MBProgressHUD/MBProgressHUD.h>
 #import "AFHTTPSessionManager+RetryPolicy.h"
+#import "yoyoAFHTTPSessionManager.h"
 
 @interface HomeViewController ()
 
@@ -57,15 +58,15 @@
     
     if( [[defaults objectForKey:@"workShopNumber"] integerValue] == 1 ){
         self.workShopCover.image = [UIImage imageNamed:@"bg_ws01.png"];
-        self.workShopTitle.text = @"工作坊//#1 - 化石 + 抱抱恐龍BB";
+        self.workShopTitle.text = @"工作坊 // #1 - 掃化石 + 抱抱恐龍BB";
         
     }else if( [[defaults objectForKey:@"workShopNumber"] integerValue] == 2 ){
         self.workShopCover.image = [UIImage imageNamed:@"bg_ws02.png"];
-        self.workShopTitle.text = @"工作坊//#2 - 化石 + 抱抱恐龍BB";
+        self.workShopTitle.text = @"工作坊 // #2 - 化石清修室";
         
     }else{
         self.workShopCover.image = [UIImage imageNamed:@"bg_ws03.png"];
-        self.workShopTitle.text = @"工作坊//#3 - 化石 + 抱抱恐龍BB";
+        self.workShopTitle.text = @"工作坊 // #3 - 復活任務";
         
     }
 }
@@ -140,9 +141,9 @@
         
         return;
     }
-    NSLog(@"URL: %@", requestedUrl);
+    NSLog(@"Login URL: %@", requestedUrl);
     
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    AFHTTPSessionManager *manager = [yoyoAFHTTPSessionManager sharedManager];//[AFHTTPSessionManager manager];
     manager.securityPolicy.allowInvalidCertificates = YES;
     manager.securityPolicy.validatesDomainName = NO;
     [manager GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
@@ -251,8 +252,11 @@
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     
     NSString *requestedUrl = [NSString stringWithFormat:@"%@/event_essentials?ct_json", [defaults stringForKey:@"baseUrl"]];
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-    [manager GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
+    NSLog(@"Event Detail URL: %@", requestedUrl);
+    
+    //AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    
+    [[yoyoAFHTTPSessionManager sharedManager] GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
         
         [MBProgressHUD hideHUDForView:self.view animated:YES];
 
@@ -279,5 +283,6 @@
     [theSelf performSegueWithIdentifier:@"showTicketList" sender:theSelf];
     
 }
+
 
 @end

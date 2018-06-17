@@ -17,13 +17,20 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cellIdentifier" rowHeight="65" id="KGk-i7-Jjw" customClass="ListTableViewCell">
-            <rect key="frame" x="0.0" y="0.0" width="320" height="65"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cellIdentifier" rowHeight="82" id="KGk-i7-Jjw" customClass="ListTableViewCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="82"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
-                <rect key="frame" x="0.0" y="0.0" width="320" height="64.5"/>
+                <rect key="frame" x="0.0" y="0.0" width="320" height="81.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="af6-g1-e1m">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="82"/>
+                        <color key="backgroundColor" red="0.99607843139999996" green="0.8980392157" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </view>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="bg_ticket_listing" translatesAutoresizingMaskIntoConstraints="NO" id="239-3Y-eiO">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="65"/>
+                    </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="Jason Smith" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GfP-X9-DQU">
                         <rect key="frame" x="8" y="2" width="279" height="19.5"/>
                         <fontDescription key="fontDescription" name="Montserrat-Bold" family="Montserrat" pointSize="16"/>
@@ -42,11 +49,11 @@
                         <color key="textColor" red="0.98724210262298584" green="0.23108738660812378" blue="0.20187762379646301" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="table_details" translatesAutoresizingMaskIntoConstraints="NO" id="PwD-Xi-top">
-                        <rect key="frame" x="294" y="24.5" width="16" height="16"/>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="ic_tickets" translatesAutoresizingMaskIntoConstraints="NO" id="PwD-Xi-top">
+                        <rect key="frame" x="269" y="4" width="40" height="40"/>
                         <constraints>
-                            <constraint firstAttribute="width" constant="16" id="Fqa-z9-hRm"/>
-                            <constraint firstAttribute="height" constant="16" id="w55-1F-psn"/>
+                            <constraint firstAttribute="width" constant="40" id="Fqa-z9-hRm"/>
+                            <constraint firstAttribute="height" constant="40" id="w55-1F-psn"/>
                         </constraints>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Purchased:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lfk-Rq-sB0">
@@ -67,20 +74,36 @@
                         <color key="textColor" red="0.98724210262298584" green="0.23108738660812378" blue="0.20187762379646301" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="查看" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HbD-kS-IGh">
+                        <rect key="frame" x="273" y="43" width="31" height="18"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
                 </subviews>
                 <constraints>
+                    <constraint firstItem="HbD-kS-IGh" firstAttribute="top" secondItem="PwD-Xi-top" secondAttribute="bottom" constant="-1" id="2tV-w2-n6Q"/>
+                    <constraint firstItem="af6-g1-e1m" firstAttribute="trailing" secondItem="239-3Y-eiO" secondAttribute="trailing" id="3Ko-94-83z"/>
                     <constraint firstItem="MHb-Wg-O4d" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="8" id="41A-gH-S4S"/>
                     <constraint firstAttribute="trailing" secondItem="PwD-Xi-top" secondAttribute="trailing" constant="10" id="8Zi-tm-IHZ"/>
+                    <constraint firstItem="af6-g1-e1m" firstAttribute="height" secondItem="H2p-sc-9uM" secondAttribute="height" id="ItE-Wc-lzs"/>
                     <constraint firstItem="GfP-X9-DQU" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="8" id="JGO-5C-IhV"/>
                     <constraint firstItem="lfk-Rq-sB0" firstAttribute="leading" secondItem="MHb-Wg-O4d" secondAttribute="trailing" constant="-16" id="KUe-2W-x1R"/>
+                    <constraint firstItem="239-3Y-eiO" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="LlA-ES-1pP"/>
+                    <constraint firstItem="HbD-kS-IGh" firstAttribute="leading" secondItem="PwD-Xi-top" secondAttribute="leading" constant="4" id="OKh-yx-gPM"/>
                     <constraint firstAttribute="trailingMargin" secondItem="GfP-X9-DQU" secondAttribute="trailing" constant="17" id="POa-Gt-EuS"/>
-                    <constraint firstAttribute="centerY" secondItem="PwD-Xi-top" secondAttribute="centerY" id="RNc-9X-r5d"/>
+                    <constraint firstItem="PwD-Xi-top" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="4" id="S7K-Mo-ffG"/>
                     <constraint firstItem="Icd-93-9fL" firstAttribute="leading" secondItem="lfk-Rq-sB0" secondAttribute="trailing" constant="8" id="U1T-cX-Yqb"/>
+                    <constraint firstItem="af6-g1-e1m" firstAttribute="top" secondItem="239-3Y-eiO" secondAttribute="top" id="YY9-1D-WIE"/>
+                    <constraint firstAttribute="trailing" secondItem="239-3Y-eiO" secondAttribute="trailing" id="lU8-VN-bav"/>
+                    <constraint firstItem="239-3Y-eiO" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="mkz-lz-M4i"/>
                     <constraint firstItem="rhH-jc-h4Z" firstAttribute="centerY" secondItem="MHb-Wg-O4d" secondAttribute="centerY" id="nrX-FU-DzB"/>
                     <constraint firstItem="GfP-X9-DQU" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="2" id="qFM-pB-EtK"/>
                     <constraint firstItem="rhH-jc-h4Z" firstAttribute="leading" secondItem="MHb-Wg-O4d" secondAttribute="trailing" constant="8" id="rqI-dd-bEU"/>
+                    <constraint firstItem="af6-g1-e1m" firstAttribute="width" secondItem="239-3Y-eiO" secondAttribute="width" id="sTc-pU-sOD"/>
                     <constraint firstItem="lfk-Rq-sB0" firstAttribute="top" secondItem="rhH-jc-h4Z" secondAttribute="bottom" constant="2" id="t2B-NE-cBD"/>
                     <constraint firstItem="Icd-93-9fL" firstAttribute="centerY" secondItem="lfk-Rq-sB0" secondAttribute="centerY" id="uun-xG-rcb"/>
+                    <constraint firstItem="af6-g1-e1m" firstAttribute="leading" secondItem="239-3Y-eiO" secondAttribute="leading" id="vHV-4g-qHS"/>
                     <constraint firstItem="MHb-Wg-O4d" firstAttribute="top" secondItem="GfP-X9-DQU" secondAttribute="bottom" constant="6" id="xFA-RE-dUm"/>
                 </constraints>
             </tableViewCellContentView>
@@ -92,10 +115,11 @@
                 <outlet property="lblStaticId" destination="MHb-Wg-O4d" id="jwN-hO-4cF"/>
                 <outlet property="lblStaticPurchased" destination="lfk-Rq-sB0" id="Vl3-BN-Q07"/>
             </connections>
-            <point key="canvasLocation" x="29" y="56.5"/>
+            <point key="canvasLocation" x="-32" y="56"/>
         </tableViewCell>
     </objects>
     <resources>
-        <image name="table_details" width="16" height="16"/>
+        <image name="bg_ticket_listing" width="328" height="72"/>
+        <image name="ic_tickets" width="32" height="32"/>
     </resources>
 </document>

@@ -11,6 +11,7 @@
 #import <AFNetworking/AFNetworking.h>
 #import <MBProgressHUD/MBProgressHUD.h>
 #import "AFHTTPSessionManager+RetryPolicy.h"
+#import "yoyoAFHTTPSessionManager.h"
 
 @interface ScannerViewController ()
     @property (nonatomic, strong) AVCaptureSession *captureSession;
@@ -38,7 +39,7 @@
         defaults = [NSUserDefaults standardUserDefaults];
     }
     
-    navItem.title = [defaults objectForKey:@"APP_TITLE"];
+    //navItem.title = [defaults objectForKey:@"APP_TITLE"];
     [btnCancel setTitle:[defaults objectForKey:@"CANCEL"] forState:UIControlStateNormal];
     
     supportedMetaTypes = @[
@@ -198,13 +199,15 @@
     }
 
     NSString *requestedUrl = [NSString stringWithFormat:@"%@/check_in/%@?ct_json", [defaults stringForKey:@"baseUrl"], checksum];
+    NSLog(@"Scan URL: %@", requestedUrl);
+    
     if([NSURL URLWithString:requestedUrl] == nil) {
         [self showOverlayWithStatus:NO];
         return;
     }
     
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    AFHTTPSessionManager *manager = [yoyoAFHTTPSessionManager sharedManager];//[AFHTTPSessionManager manager];
     [manager GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
 //        NSLog(@"%@", responseObject);

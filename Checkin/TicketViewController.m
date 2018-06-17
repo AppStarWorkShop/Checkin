@@ -11,6 +11,7 @@
 #import <MBProgressHUD/MBProgressHUD.h>
 #import <AFNetworking/AFNetworking.h>
 #import "AFHTTPSessionManager+RetryPolicy.h"
+#import "yoyoAFHTTPSessionManager.h"
 
 @interface TicketViewController ()
 
@@ -85,7 +86,7 @@
     
     NSString *requestedUrl = [NSString stringWithFormat:@"%@/check_in/%@?ct_json", [defaults stringForKey:@"baseUrl"], ticketData[@"checksum"]];
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    AFHTTPSessionManager *manager = [yoyoAFHTTPSessionManager sharedManager];//[AFHTTPSessionManager manager];
     [manager GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
         
@@ -180,8 +181,10 @@
 -(void)ticketCheckins
 {
     NSString *requestedUrl = [NSString stringWithFormat:@"%@/ticket_checkins/%@?ct_json", [defaults stringForKey:@"baseUrl"], ticketData[@"checksum"]];
+    NSLog(@"Ticket View URL: %@", requestedUrl);
+    
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    AFHTTPSessionManager *manager = [yoyoAFHTTPSessionManager sharedManager];//[AFHTTPSessionManager manager];
     [manager GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
         checkinsArray = [[NSArray alloc] initWithArray:responseObject];

@@ -15,4 +15,12 @@
 
 //@property (weak, nonatomic) NSInteger currentPage;
 //@property (weak, nonatomic) BOOL showInfinite;
+@property (weak, nonatomic) IBOutlet UIButton *closeBtn;
+@property (weak, nonatomic) IBOutlet UIImageView *searchIcon;
+@property (weak, nonatomic) IBOutlet UILabel *pageTitle;
+@property (weak, nonatomic) IBOutlet UIView *headerView;
+@property (weak, nonatomic) IBOutlet UIImageView *pageBg;
+
+
+
 @end

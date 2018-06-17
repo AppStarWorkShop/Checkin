@@ -15,6 +15,7 @@
 #import <AFNetworking/AFNetworking.h>
 #import "UIScrollView+InfiniteScroll.h"
 #import "AFHTTPSessionManager+RetryPolicy.h"
+#import "yoyoAFHTTPSessionManager.h"
 
 @interface ListViewController ()
 @end
@@ -24,7 +25,7 @@
     NSArray *searchResults;
     NSUserDefaults *defaults;
 }
-@synthesize /*btnBurger,*/ tblTickets;
+@synthesize /*btnBurger,*/ tblTickets, closeBtn, searchIcon, pageTitle, headerView, pageBg;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -89,7 +90,9 @@
     NSInteger itemsPerPage = 50;
     NSInteger currentPage = [[defaults objectForKey:@"currentPage"] integerValue];
     NSString *requestedUrl = [NSString stringWithFormat:@"%@/tickets_info/%ld/%ld/?ct_json", [defaults stringForKey:@"baseUrl"], itemsPerPage, currentPage];
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    NSLog(@"Fetch Tickets URL: %@", requestedUrl);
+    
+    AFHTTPSessionManager *manager = [yoyoAFHTTPSessionManager sharedManager];//[AFHTTPSessionManager manager];
     [manager GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
         unsigned int i;
         
@@ -169,11 +172,14 @@
     cell.lblStaticId.text = [defaults objectForKey:@"ID"];
     cell.lblStaticPurchased.text = [defaults objectForKey:@"PURCHASED"];
     
+    cell.backgroundColor = UIColor.clearColor;
+    /*
     if(indexPath.row % 2 == 1) {
-        cell.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:239.0/255.0 blue:242.0/255.0 alpha:1.0];
+        //cell.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:239.0/255.0 blue:242.0/255.0 alpha:1.0];
+        
     } else {
-        cell.backgroundColor = [UIColor whiteColor];
-    }
+        //cell.backgroundColor = [UIColor whiteColor];
+    }*/
     
     cell.selectionStyle = UITableViewCellStyleDefault;
     
@@ -191,11 +197,12 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 65;
+    return 100;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 //    if (tableView == self.searchDisplayController.searchResultsTableView) {
+        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
         [self performSegueWithIdentifier:@"showDetails" sender:nil];
 //    }
 }
@@ -221,6 +228,8 @@
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    [MBProgressHUD hideHUDForView:self.view animated:YES];
+    
     if([segue.identifier isEqualToString:@"showDetails"]) {
         NSIndexPath *indexPath = nil;
         NSDictionary *ticketDict = nil;
