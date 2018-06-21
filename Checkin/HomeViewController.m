@@ -59,14 +59,20 @@
     if( [[defaults objectForKey:@"workShopNumber"] integerValue] == 1 ){
         self.workShopCover.image = [UIImage imageNamed:@"bg_ws01.png"];
         self.workShopTitle.text = @"工作坊 // #1 - 掃化石 + 抱抱恐龍BB";
+        [defaults setValue:@"掃化石 + 抱抱恐龍BB" forKey:@"workShopName"];
+        [defaults setValue:@"工作坊1" forKey:@"workShopAvenue"];
         
     }else if( [[defaults objectForKey:@"workShopNumber"] integerValue] == 2 ){
         self.workShopCover.image = [UIImage imageNamed:@"bg_ws02.png"];
         self.workShopTitle.text = @"工作坊 // #2 - 化石清修室";
+        [defaults setValue:@"化石清修室" forKey:@"workShopName"];
+        [defaults setValue:@"工作坊2" forKey:@"workShopAvenue"];
         
     }else{
         self.workShopCover.image = [UIImage imageNamed:@"bg_ws03.png"];
         self.workShopTitle.text = @"工作坊 // #3 - 復活任務";
+        [defaults setValue:@"復活任務" forKey:@"workShopName"];
+        [defaults setValue:@"工作坊3" forKey:@"workShopAvenue"];
         
     }
 }

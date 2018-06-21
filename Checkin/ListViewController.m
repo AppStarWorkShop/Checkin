@@ -113,8 +113,12 @@
             for (i=0; i < [dataObject count]-1; i++) {
                 NSMutableDictionary *tempData = [dataObject objectAtIndex:i];
                 NSMutableDictionary *tempObj = [tempData[@"data"] mutableCopy];
+                NSArray *tempObjl2 = [tempObj[@"custom_fields"] mutableCopy];
+                //NSLog(@"%@",[tempObjl2 objectAtIndex:tempObjl2.count-1][1]);
                 
-                [tempObj setValue:[NSString stringWithFormat:@"%@ %@", tempObj[@"buyer_first"], tempObj[@"buyer_last"]] forKey:@"name"];
+                [tempObj setValue:[NSString stringWithFormat:@"%@", [tempObjl2 objectAtIndex:tempObjl2.count-1][1]] forKey:@"name"];
+                //[tempObj setValue:[NSString stringWithFormat:@"%@ %@", tempObj[@"buyer_first"], tempObj[@"buyer_last"]] forKey:@"name"];
+                //[tempObj setValue:[NSString stringWithFormat:@"%@", tempObjl2[@"Buyer E-mail"]] forKey:@"name"];
                 [listItems addObject:tempObj];
                     
             }
@@ -201,10 +205,19 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-//    if (tableView == self.searchDisplayController.searchResultsTableView) {
-        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-        [self performSegueWithIdentifier:@"showDetails" sender:nil];
-//    }
+    NSDictionary *ticketDict = [listItems objectAtIndex:indexPath.row];
+    
+    if (tableView == self.searchDisplayController.searchResultsTableView) {
+        ticketDict = [searchResults objectAtIndex:indexPath.row];
+    }
+    
+    [defaults setValue:ticketDict[@"transaction_id"] forKey:@"ticketNo"];
+    [defaults setValue:[NSString stringWithFormat:@"%@", ticketDict[@"name"]] forKey:@"buyerEmail"];
+    [defaults setValue:ticketDict[@"payment_date"] forKey:@"ticketDate"];
+
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    [self performSegueWithIdentifier:@"showDetails" sender:nil];
+
 }
 
 #pragma mark - Search

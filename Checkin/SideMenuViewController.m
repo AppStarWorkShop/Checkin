@@ -54,10 +54,10 @@
     if( sender.tag == 1 ){
         [defaults setInteger:1 forKey:@"workShopNumber"];
         [defaults setBool:YES forKey:@"logged"];
-        [defaults setValue:@"https://shopsolndemo.com/" forKey:@"apiUrl"];
-        [defaults setValue:@"315D1804" forKey:@"apiKey"];
-        //[defaults setValue:@"http://40.83.79.25" forKey:@"apiUrl"];
-        //[defaults setValue:@"2A7B217C" forKey:@"apiKey"];
+        //[defaults setValue:@"https://shopsolndemo.com/" forKey:@"apiUrl"];
+        //[defaults setValue:@"315D1804" forKey:@"apiKey"];
+        [defaults setValue:@"http://40.83.79.25" forKey:@"apiUrl"];
+        [defaults setValue:@"2A7B217C" forKey:@"apiKey"];
         
         //[self login];
         

@@ -24,8 +24,8 @@
                 <rect key="frame" x="0.0" y="0.0" width="320" height="81.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="af6-g1-e1m">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="82"/>
+                    <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="af6-g1-e1m">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="85"/>
                         <color key="backgroundColor" red="0.99607843139999996" green="0.8980392157" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="bg_ticket_listing" translatesAutoresizingMaskIntoConstraints="NO" id="239-3Y-eiO">
@@ -49,8 +49,8 @@
                         <color key="textColor" red="0.98724210262298584" green="0.23108738660812378" blue="0.20187762379646301" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="ic_tickets" translatesAutoresizingMaskIntoConstraints="NO" id="PwD-Xi-top">
-                        <rect key="frame" x="269" y="4" width="40" height="40"/>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_tickets" translatesAutoresizingMaskIntoConstraints="NO" id="PwD-Xi-top">
+                        <rect key="frame" x="270" y="6" width="40" height="40"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="40" id="Fqa-z9-hRm"/>
                             <constraint firstAttribute="height" constant="40" id="w55-1F-psn"/>
@@ -74,8 +74,8 @@
                         <color key="textColor" red="0.98724210262298584" green="0.23108738660812378" blue="0.20187762379646301" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="查看" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HbD-kS-IGh">
-                        <rect key="frame" x="273" y="43" width="31" height="18"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="查看" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HbD-kS-IGh">
+                        <rect key="frame" x="274" y="45" width="31" height="18"/>
                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
@@ -92,7 +92,7 @@
                     <constraint firstItem="239-3Y-eiO" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="LlA-ES-1pP"/>
                     <constraint firstItem="HbD-kS-IGh" firstAttribute="leading" secondItem="PwD-Xi-top" secondAttribute="leading" constant="4" id="OKh-yx-gPM"/>
                     <constraint firstAttribute="trailingMargin" secondItem="GfP-X9-DQU" secondAttribute="trailing" constant="17" id="POa-Gt-EuS"/>
-                    <constraint firstItem="PwD-Xi-top" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="4" id="S7K-Mo-ffG"/>
+                    <constraint firstItem="PwD-Xi-top" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="6" id="S7K-Mo-ffG"/>
                     <constraint firstItem="Icd-93-9fL" firstAttribute="leading" secondItem="lfk-Rq-sB0" secondAttribute="trailing" constant="8" id="U1T-cX-Yqb"/>
                     <constraint firstItem="af6-g1-e1m" firstAttribute="top" secondItem="239-3Y-eiO" secondAttribute="top" id="YY9-1D-WIE"/>
                     <constraint firstAttribute="trailing" secondItem="239-3Y-eiO" secondAttribute="trailing" id="lU8-VN-bav"/>

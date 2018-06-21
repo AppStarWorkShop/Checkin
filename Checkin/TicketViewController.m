@@ -26,7 +26,7 @@
     __weak IBOutlet UILabel *lblCheckins;
     __weak IBOutlet UINavigationItem *navItem;
 }
-@synthesize btnCheckin, tblCheckins, lblDate, lblHolderName, lblID, ticketData, imgStatusIcon, lblStatusText, lblStatusTitle;
+@synthesize btnCheckin, tblCheckins, lblDate, lblHolderName, lblID, ticketData, imgStatusIcon, lblStatusText, lblStatusTitle, ticketNo, buyerEmail, ticketDate, workShopVenue, workShopName, workShopDate, workShopHour, buyerNumber, ticketStatus;
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -35,9 +35,9 @@
         defaults = [NSUserDefaults standardUserDefaults];
     }
     
-    navItem.title = [defaults objectForKey:@"APP_TITLE"];
+    //navItem.title = [defaults objectForKey:@"APP_TITLE"];
     
-    btnCheckin.layer.cornerRadius = 4;
+    //btnCheckin.layer.cornerRadius = 4;
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     
     lblHolderName.text = ticketData[@"name"];
@@ -46,10 +46,21 @@
     lblPurchased.text = [defaults objectForKey:@"PURCHASED"];
     lblIDStatic.text = [defaults objectForKey:@"ID"];
     lblCheckins.text = [defaults objectForKey:@"CHECKINS"];
-    [btnCheckin setTitle:[defaults objectForKey:@"CHECK_IN"] forState:UIControlStateNormal];
+    //[btnCheckin setTitle:[defaults objectForKey:@"CHECK_IN"] forState:UIControlStateNormal];
     
     customFieldsArray = [[NSArray alloc] initWithArray:ticketData[@"custom_fields"]];
     self.viewOverlay.layer.cornerRadius = 5;
+    
+    ticketNo.text = @"";
+    buyerEmail.text = @"";
+    ticketDate.text = @"";
+    workShopVenue.text = @"";
+    workShopName.text = @"";
+    workShopDate.text = @"";
+    workShopHour.text = @"";
+    buyerNumber.text = @"";
+    ticketStatus.text = @"";
+    btnCheckin.hidden = YES;
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -71,14 +82,15 @@
 - (void)showOverlayWithStatus:(BOOL)status
 {
     if(status == YES) {
-        imgStatusIcon.image = [UIImage imageNamed:@"success"];
-        lblStatusTitle.text = [defaults objectForKey:@"SUCCESS"];
+        imgStatusIcon.image = [UIImage imageNamed:@"ic_popup_success"];
+        lblStatusTitle.text = @"掃描成功";//[defaults objectForKey:@"SUCCESS"];
         lblStatusText.text = [defaults objectForKey: @"SUCCESS_MESSAGE"];
     } else {
-        imgStatusIcon.image = [UIImage imageNamed:@"error"];
+        imgStatusIcon.image = [UIImage imageNamed:@"ic_popup_scanned"];
         lblStatusTitle.text = [defaults objectForKey:@"ERROR"];
         lblStatusText.text = [defaults objectForKey:@"ERROR_MESSAGE"];
     }
+    
     [self.viewOverlayWrapper setHidden:NO];
 }
 
@@ -95,9 +107,14 @@
         [self ticketCheckins];
         if ([responseObject[@"status"] isEqualToNumber:@0]) {
             [self showOverlayWithStatus:NO];
+            ticketStatus.text = @"- 未使用 -";
+            btnCheckin.hidden = NO;
         } else {
             [self showOverlayWithStatus:YES];
+            ticketStatus.text = @"- 已使用 -";
+            btnCheckin.hidden = YES;
         }
+        
     } failure:^(NSURLSessionTask *task, NSError *error) {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
         [self showOverlayWithStatus:NO];
@@ -189,6 +206,25 @@
         [MBProgressHUD hideHUDForView:self.view animated:YES];
         checkinsArray = [[NSArray alloc] initWithArray:responseObject];
         [tblCheckins reloadData];
+        
+        if(checkinsArray.count > 0 && [checkinsArray[checkinsArray.count-1][@"data"][@"status"] isEqualToString:@"Pass"]) {
+            ticketStatus.text = @"- 已使用 -";
+            btnCheckin.hidden = YES;
+        }else{
+            ticketStatus.text = @"- 未使用 -";
+            btnCheckin.hidden = NO;
+        }
+        
+        ticketNo.text = [defaults objectForKey:@"ticketNo"];
+        buyerEmail.text = [defaults objectForKey:@"buyerEmail"];
+        ticketDate.text = [defaults objectForKey:@"ticketDate"];
+        workShopVenue.text = [defaults objectForKey:@"workShopAvenue"];
+        workShopName.text = [defaults objectForKey:@"workShopName"];
+        workShopHour.text = @"TBC";
+        workShopDate.text = @"TBC";
+        buyerNumber.text = @"1";
+        
+        
     } failure:^(NSURLSessionTask *task, NSError *error) {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:[defaults objectForKey:@"ERROR"] message:[defaults objectForKey:@"ERROR_LOADING_DATA"] preferredStyle:UIAlertControllerStyleAlert];

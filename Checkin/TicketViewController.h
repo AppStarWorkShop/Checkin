@@ -24,4 +24,16 @@
 @property (weak, nonatomic) IBOutlet UILabel *lblStatusTitle;
 @property (weak, nonatomic) IBOutlet UILabel *lblStatusText;
 
+
+@property (weak, nonatomic) IBOutlet UILabel *ticketNo;
+@property (weak, nonatomic) IBOutlet UILabel *buyerEmail;
+@property (weak, nonatomic) IBOutlet UILabel *ticketDate;
+
+@property (weak, nonatomic) IBOutlet UILabel *workShopVenue;
+@property (weak, nonatomic) IBOutlet UILabel *workShopName;
+@property (weak, nonatomic) IBOutlet UILabel *workShopDate;
+@property (weak, nonatomic) IBOutlet UILabel *workShopHour;
+@property (weak, nonatomic) IBOutlet UILabel *buyerNumber;
+@property (weak, nonatomic) IBOutlet UILabel *ticketStatus;
+
 @end
