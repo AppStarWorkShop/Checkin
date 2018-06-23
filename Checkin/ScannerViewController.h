@@ -20,5 +20,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *lblStatusTitle;
 @property (weak, nonatomic) IBOutlet UILabel *lblStatusText;
 
+@property (weak, nonatomic) IBOutlet UILabel *buyerEmail;
+@property (weak, nonatomic) IBOutlet UILabel *ticketID;
+@property (weak, nonatomic) IBOutlet UILabel *ticketIdLabel;
 
 @end

@@ -29,7 +29,7 @@
     BOOL checkinStatus;
     __weak IBOutlet UINavigationItem *navItem;
 }
-@synthesize captureSession, videoPreviewLayer, viewPreview, audioPlayer, btnFlash, btnCancel, imgStatusIcon, lblStatusTitle, lblStatusText;
+@synthesize captureSession, videoPreviewLayer, viewPreview, audioPlayer, btnFlash, btnCancel, imgStatusIcon, lblStatusTitle, lblStatusText, buyerEmail, ticketID, ticketIdLabel;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -59,6 +59,8 @@
 
 -(void)viewDidAppear:(BOOL)animated {
     [self continueScanning];
+    
+    //[self checkinWithCode:@"SHK000037"];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -175,19 +177,33 @@
     }
 }
 
-- (void)showOverlayWithStatus:(BOOL)status
+//- (void)showOverlayWithStatus:(BOOL)status
+- (void)showOverlayWithStatus:(NSString*)status
 {
-    checkinStatus = status;
-    if(status == YES) {
-        imgStatusIcon.image = [UIImage imageNamed:@"success"];
-        lblStatusTitle.text = [defaults objectForKey:@"SUCCESS"];
+    //checkinStatus = status;
+    //if(status == YES) {
+    if([status isEqualToString:@"1"]) {
+        imgStatusIcon.image = [UIImage imageNamed:@"ic_popup_success"];
+        lblStatusTitle.text = @"門票掃描成功";//[defaults objectForKey:@"SUCCESS"];
         lblStatusText.text = [defaults objectForKey: @"SUCCESS_MESSAGE"];
+        checkinStatus = YES;
+        
+    } else if([status isEqualToString:@"2"]) {
+        imgStatusIcon.image = [UIImage imageNamed:@"ic_popup_scanned"];
+        lblStatusTitle.text = @"門票已使用";//[defaults objectForKey: @"ERROR"];
+        lblStatusText.text = [defaults objectForKey:@"ERROR_MESSAGE"];
+        checkinStatus = NO;
         
     } else {
-        imgStatusIcon.image = [UIImage imageNamed:@"error"];
-        lblStatusTitle.text = [defaults objectForKey: @"ERROR"];
+        imgStatusIcon.image = [UIImage imageNamed:@"ic_popup_scanned"];
+        lblStatusTitle.text = [NSString stringWithFormat:@"%@", @"門票信息無效"];//[defaults objectForKey: @"ERROR"];
+        self.buyerEmail.text = [NSString stringWithFormat:@"%@%@", @"當前工作區", [defaults objectForKey:@"eventName"]];
         lblStatusText.text = [defaults objectForKey:@"ERROR_MESSAGE"];
+        checkinStatus = NO;
+        self.ticketID.hidden = YES;
+        self.ticketIdLabel.hidden = YES;
     }
+    
     [self.viewOverlayWrapper setHidden:NO];
 }
 
@@ -202,7 +218,7 @@
     NSLog(@"Scan URL: %@", requestedUrl);
     
     if([NSURL URLWithString:requestedUrl] == nil) {
-        [self showOverlayWithStatus:NO];
+        [self showOverlayWithStatus:@"0"];
         return;
     }
     
@@ -210,7 +226,18 @@
     AFHTTPSessionManager *manager = [yoyoAFHTTPSessionManager sharedManager];//[AFHTTPSessionManager manager];
     [manager GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
-//        NSLog(@"%@", responseObject);
+        //NSArray *responseData = [[NSArray alloc] initWithArray:responseObject];
+        //NSDictionary *responseData = [[NSArray alloc] initWithArray:responseObject];
+        NSLog(@"%@", responseObject);
+        self.ticketID.text = checksum;
+        checkinData = [responseObject mutableCopy];
+        
+        if (![responseObject isKindOfClass:[NSNull class]] && [responseObject count] > 0) {
+            NSArray *tempObj = [responseObject[@"custom_fields"] mutableCopy];
+            self.buyerEmail.text = [tempObj objectAtIndex:tempObj.count-1][1];
+            [checkinData setValue:[tempObj objectAtIndex:tempObj.count-1][1] forKey:@"buyerEmail"];
+        }
+        
         if([responseObject[@"status"] boolValue]) {
             NSDateFormatter *printFormatter = [[NSDateFormatter alloc] init];
             [printFormatter setDateFormat:@"dd.MM.yyyy"];
@@ -218,17 +245,25 @@
             [dateFormatter setLocale:[NSLocale localeWithLocaleIdentifier:@"en_GB"]];
             [dateFormatter setDateFormat:@"MMMM dd, yyyy hh:mm a"];
             NSDate *dateObj = [dateFormatter dateFromString:responseObject[@"payment_date"]];
-            
-            checkinData = [responseObject mutableCopy];
             [checkinData setValue:[printFormatter stringFromDate:dateObj] forKey:@"date"];
-            [self showOverlayWithStatus:YES];
+            [checkinData setValue:checksum forKey:@"checksum"];
+            
+            [defaults setValue:[checkinData objectForKey:@"checksum"] forKey:@"ticketNo"];
+            [defaults setValue:[checkinData objectForKey:@"buyerEmail"] forKey:@"buyerEmail"];
+            [defaults setValue:responseObject[@"payment_date"] forKey:@"ticketDate"];
+            NSLog(@"%@", defaults);
+            
+            [self showOverlayWithStatus:@"1"];
+        //} else if(responseData.count>0 && [responseData[0][@"data"][@"status"] isEqualToString:@"Fail"]) {
         } else {
-            [self showOverlayWithStatus:NO];
+            [checkinData setValue:checksum forKey:@"checksum"];
+            [self showOverlayWithStatus:@"2"];
+            
         }
         
     } failure:^(NSURLSessionTask *task, NSError *error) {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
-        [self showOverlayWithStatus:NO];
+        [self showOverlayWithStatus:@"0"];
     }];
 }
 
@@ -247,6 +282,8 @@
     if (checkinStatus == YES) {
         [self performSegueWithIdentifier:@"showDetails" sender:self];
     } else {
+        self.ticketID.hidden = NO;
+        self.ticketIdLabel.hidden = NO;
         [self continueScanning];
     }
 }

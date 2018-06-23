@@ -35,6 +35,10 @@
     lblSignOut.text = [defaults objectForKey:@"SIGN_OUT"];
     self.lblEventTitle.text = [defaults stringForKey:@"eventName"];
     self.lblEventSubtitle.text = [defaults stringForKey:@"eventDateTime"];
+    
+    self.workShopTitle1.text = @"掃化石 + 抱抱恐龍BB";
+    self.workShopTitle2.text = @"化石清修室";
+    self.workShopTitle3.text = @"復活任務";
 }
 
 - (void)didReceiveMemoryWarning

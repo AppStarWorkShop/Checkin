@@ -21,6 +21,10 @@
 @property (weak, nonatomic) IBOutlet UIButton *workShopMenu2;
 @property (weak, nonatomic) IBOutlet UIButton *workShopMenu3;
 
+@property (weak, nonatomic) IBOutlet UILabel *workShopTitle1;
+@property (weak, nonatomic) IBOutlet UILabel *workShopTitle2;
+@property (weak, nonatomic) IBOutlet UILabel *workShopTitle3;
+
 
 @end
 

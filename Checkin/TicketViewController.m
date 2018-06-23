@@ -87,7 +87,7 @@
         lblStatusText.text = [defaults objectForKey: @"SUCCESS_MESSAGE"];
     } else {
         imgStatusIcon.image = [UIImage imageNamed:@"ic_popup_scanned"];
-        lblStatusTitle.text = [defaults objectForKey:@"ERROR"];
+        lblStatusTitle.text = @"掃描錯誤";//[defaults objectForKey:@"ERROR"];
         lblStatusText.text = [defaults objectForKey:@"ERROR_MESSAGE"];
     }
     
@@ -102,7 +102,7 @@
     [manager GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
         
-//        NSLog(@"CHECKIN RESPONSE %@", responseObject);
+        NSLog(@"CHECKIN RESPONSE %@", responseObject);
         
         [self ticketCheckins];
         if ([responseObject[@"status"] isEqualToNumber:@0]) {
@@ -210,6 +210,9 @@
         if(checkinsArray.count > 0 && [checkinsArray[checkinsArray.count-1][@"data"][@"status"] isEqualToString:@"Pass"]) {
             ticketStatus.text = @"- 已使用 -";
             btnCheckin.hidden = YES;
+        }else if(checkinsArray.count > 0 && [checkinsArray[checkinsArray.count-1][@"data"][@"status"] isEqualToString:@"Fail"]) {
+            ticketStatus.text = @"- 已使用 -";
+            btnCheckin.hidden = YES;
         }else{
             ticketStatus.text = @"- 未使用 -";
             btnCheckin.hidden = NO;
@@ -218,10 +221,10 @@
         ticketNo.text = [defaults objectForKey:@"ticketNo"];
         buyerEmail.text = [defaults objectForKey:@"buyerEmail"];
         ticketDate.text = [defaults objectForKey:@"ticketDate"];
-        workShopVenue.text = [defaults objectForKey:@"workShopAvenue"];
-        workShopName.text = [defaults objectForKey:@"workShopName"];
+        workShopVenue.text = [defaults objectForKey:@"eventLocation"];
+        workShopName.text = [defaults objectForKey:@"eventName"];
         workShopHour.text = @"TBC";
-        workShopDate.text = @"TBC";
+        workShopDate.text = [defaults objectForKey:@"eventDateTime"];
         buyerNumber.text = @"1";
         
         

@@ -13,6 +13,7 @@
 #import <MBProgressHUD/MBProgressHUD.h>
 #import "AFHTTPSessionManager+RetryPolicy.h"
 #import "yoyoAFHTTPSessionManager.h"
+#import "myDataManager.h"
 
 @interface HomeViewController ()
 
@@ -22,6 +23,7 @@
     NSUserDefaults *defaults;
     __weak IBOutlet UILabel *lblSoldTickets;
     __weak IBOutlet UILabel *lblCheckedIn;
+    
 }
 @synthesize btnBurger, btnSearch;
 
@@ -45,7 +47,7 @@
     }
     
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
-    
+
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -117,7 +119,14 @@
         [self performSegueWithIdentifier:@"showLanding" sender:self];
     } else {
         //[self eventDetails];
-        [self login];
+        NSString *currentKey = [NSString stringWithFormat:@"%@", [defaults objectForKey:@"currentKey"]];
+        NSString *apiKey = [NSString stringWithFormat:@"%@", [defaults objectForKey:@"apiKey"]];
+        
+        if(![currentKey isEqualToString:apiKey]) {
+            [self login];
+        }else{
+            [self eventDetails];
+        }
     }
     
     /*
@@ -193,7 +202,11 @@
                     [defaults setObject: responseObject[@"APP_TITLE"] forKey:@"APP_TITLE"];
                     [defaults setObject: responseObject[@"ERROR_LICENSE_KEY"] forKey:@"ERROR_LICENSE_KEY"];
                     
+                    [defaults setValue:responseObject[@"event_location"] forKey:@"eventLocation"];
+                    [defaults setValue:responseObject[@"event_name"] forKey:@"eventName"];
+                    [defaults setValue:responseObject[@"event_date_time"] forKey:@"eventDateTime"];
                     
+                    [defaults setValue:apiKey forKey:@"currentKey"];
                     [defaults setBool:YES forKey:@"custom_translations"];
                     [defaults synchronize];
                 }
@@ -260,23 +273,45 @@
     NSString *requestedUrl = [NSString stringWithFormat:@"%@/event_essentials?ct_json", [defaults stringForKey:@"baseUrl"]];
     NSLog(@"Event Detail URL: %@", requestedUrl);
     
-    //AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-    
-    [[yoyoAFHTTPSessionManager sharedManager] GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
+    [[yoyoAFHTTPSessionManager sharedManager] GET:@"http://40.83.79.25/servertime.php" parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseServerTimeObject) {
         
-        [MBProgressHUD hideHUDForView:self.view animated:YES];
-
-        self.lblSold.text = [NSString stringWithFormat:@"%@", responseObject[@"sold_tickets"]];
-        self.lblCheckins.text =  [NSString stringWithFormat:@"%@", responseObject[@"checked_tickets"]];
-        
-        [defaults setObject:responseObject[@"event_name"] forKey:@"eventName"];
-        [defaults setObject:responseObject[@"event_date_time"] forKey:@"eventDateTime"];
-        [defaults setObject:responseObject[@"sold_tickets"] forKey:@"soldTickets"];
-        [defaults synchronize];
+        [[yoyoAFHTTPSessionManager sharedManager] GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
+            
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
+            
+            NSArray *dateItems = [responseServerTimeObject[@"server_datetime"] componentsSeparatedByString:@" "];
+            NSInteger timeValue = 0;
+            if(dateItems && [dateItems count]>0){
+                NSArray *timeItems = [dateItems[1] componentsSeparatedByString:@":"];
+                if(timeItems && [timeItems count]>0){
+                    NSString *timeValues = [NSString stringWithFormat:@"%@%@", timeItems[0], timeItems[1]];
+                    timeValue = [timeValues intValue];
+                }
+            }
+            
+            //NSString *sessionPeriod = [myDataManager getCurrentSessionPeriod:timeValue];
+            //NSLog(@"session period: %@", sessionPeriod);
+            
+            self.lblSold.text = [[myDataManager getCurrentSessionPeriod:timeValue] stringByReplacingOccurrencesOfString:@"%" withString:@" "];//[NSString stringWithFormat:@"%@", responseObject[@"sold_tickets"]];
+            self.lblCheckins.text =  [NSString stringWithFormat:@"%@", responseObject[@"checked_tickets"]];
+            
+            [defaults setObject:responseObject[@"event_name"] forKey:@"eventName"];
+            [defaults setObject:responseObject[@"event_date_time"] forKey:@"eventDateTime"];
+            [defaults setObject:responseObject[@"sold_tickets"] forKey:@"soldTickets"];
+            [defaults setObject:responseObject[@"event_location"] forKey:@"eventLocation"];
+            
+            [defaults synchronize];
+            
+        } failure:^(NSURLSessionTask *task, NSError *error) {
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
+            
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:[defaults objectForKey:@"ERROR"] message:[defaults objectForKey:@"ERROR_LOADING_DATA"] preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *okAction = [UIAlertAction actionWithTitle:[defaults objectForKey:@"OK"] style:UIAlertActionStyleDefault handler:nil];
+            [alert addAction:okAction];
+            [self presentViewController:alert animated:YES completion:nil];
+        } retryCount:5 retryInterval:1.0 progressive:false fatalStatusCodes:@[@401,@403]];
         
     } failure:^(NSURLSessionTask *task, NSError *error) {
-        [MBProgressHUD hideHUDForView:self.view animated:YES];
-        
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:[defaults objectForKey:@"ERROR"] message:[defaults objectForKey:@"ERROR_LOADING_DATA"] preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction *okAction = [UIAlertAction actionWithTitle:[defaults objectForKey:@"OK"] style:UIAlertActionStyleDefault handler:nil];
         [alert addAction:okAction];
