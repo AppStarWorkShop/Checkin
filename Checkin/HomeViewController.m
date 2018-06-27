@@ -14,6 +14,7 @@
 #import "AFHTTPSessionManager+RetryPolicy.h"
 #import "yoyoAFHTTPSessionManager.h"
 #import "myDataManager.h"
+#import "myConstant.h"
 
 @interface HomeViewController ()
 
@@ -60,8 +61,10 @@
     
     if( [[defaults objectForKey:@"workShopNumber"] integerValue] == 1 ){
         self.workShopCover.image = [UIImage imageNamed:@"bg_ws01.png"];
-        self.workShopTitle.text = @"工作坊 // #1 - 掃化石 + 抱抱恐龍BB";
-        [defaults setValue:@"掃化石 + 抱抱恐龍BB" forKey:@"workShopName"];
+        //self.workShopTitle.text = @"工作坊 // #1 - 掃化石 + 抱抱恐龍BB";
+        self.workShopTitle.text = @"工作坊 // #1 - 考古巢穴";
+        //[defaults setValue:@"掃化石 + 抱抱恐龍BB" forKey:@"workShopName"];
+        [defaults setValue:@"考古巢穴" forKey:@"workShopName"];
         [defaults setValue:@"工作坊1" forKey:@"workShopAvenue"];
         
     }else if( [[defaults objectForKey:@"workShopNumber"] integerValue] == 2 ){
@@ -72,8 +75,10 @@
         
     }else{
         self.workShopCover.image = [UIImage imageNamed:@"bg_ws03.png"];
-        self.workShopTitle.text = @"工作坊 // #3 - 復活任務";
-        [defaults setValue:@"復活任務" forKey:@"workShopName"];
+        //self.workShopTitle.text = @"工作坊 // #3 - 復活任務";
+        self.workShopTitle.text = @"工作坊 // #3 - 恐龍解碼任務";
+        //[defaults setValue:@"復活任務" forKey:@"workShopName"];
+        [defaults setValue:@"恐龍解碼任務" forKey:@"workShopName"];
         [defaults setValue:@"工作坊3" forKey:@"workShopAvenue"];
         
     }
@@ -273,50 +278,50 @@
     NSString *requestedUrl = [NSString stringWithFormat:@"%@/event_essentials?ct_json", [defaults stringForKey:@"baseUrl"]];
     NSLog(@"Event Detail URL: %@", requestedUrl);
     
-    [[yoyoAFHTTPSessionManager sharedManager] GET:@"http://40.83.79.25/servertime.php" parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseServerTimeObject) {
-        
-        [[yoyoAFHTTPSessionManager sharedManager] GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
-            
-            [MBProgressHUD hideHUDForView:self.view animated:YES];
-            
-            NSArray *dateItems = [responseServerTimeObject[@"server_datetime"] componentsSeparatedByString:@" "];
-            NSInteger timeValue = 0;
-            if(dateItems && [dateItems count]>0){
-                NSArray *timeItems = [dateItems[1] componentsSeparatedByString:@":"];
-                if(timeItems && [timeItems count]>0){
-                    NSString *timeValues = [NSString stringWithFormat:@"%@%@", timeItems[0], timeItems[1]];
-                    timeValue = [timeValues intValue];
-                }
-            }
-            
-            //NSString *sessionPeriod = [myDataManager getCurrentSessionPeriod:timeValue];
-            //NSLog(@"session period: %@", sessionPeriod);
-            
-            self.lblSold.text = [[myDataManager getCurrentSessionPeriod:timeValue] stringByReplacingOccurrencesOfString:@"%" withString:@" "];//[NSString stringWithFormat:@"%@", responseObject[@"sold_tickets"]];
-            self.lblCheckins.text =  [NSString stringWithFormat:@"%@", responseObject[@"checked_tickets"]];
-            
-            [defaults setObject:responseObject[@"event_name"] forKey:@"eventName"];
-            [defaults setObject:responseObject[@"event_date_time"] forKey:@"eventDateTime"];
-            [defaults setObject:responseObject[@"sold_tickets"] forKey:@"soldTickets"];
-            [defaults setObject:responseObject[@"event_location"] forKey:@"eventLocation"];
-            
-            [defaults synchronize];
-            
-        } failure:^(NSURLSessionTask *task, NSError *error) {
-            [MBProgressHUD hideHUDForView:self.view animated:YES];
-            
-            UIAlertController *alert = [UIAlertController alertControllerWithTitle:[defaults objectForKey:@"ERROR"] message:[defaults objectForKey:@"ERROR_LOADING_DATA"] preferredStyle:UIAlertControllerStyleAlert];
-            UIAlertAction *okAction = [UIAlertAction actionWithTitle:[defaults objectForKey:@"OK"] style:UIAlertActionStyleDefault handler:nil];
-            [alert addAction:okAction];
-            [self presentViewController:alert animated:YES completion:nil];
-        } retryCount:5 retryInterval:1.0 progressive:false fatalStatusCodes:@[@401,@403]];
-        
-    } failure:^(NSURLSessionTask *task, NSError *error) {
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:[defaults objectForKey:@"ERROR"] message:[defaults objectForKey:@"ERROR_LOADING_DATA"] preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction *okAction = [UIAlertAction actionWithTitle:[defaults objectForKey:@"OK"] style:UIAlertActionStyleDefault handler:nil];
-        [alert addAction:okAction];
-        [self presentViewController:alert animated:YES completion:nil];
-    } retryCount:5 retryInterval:1.0 progressive:false fatalStatusCodes:@[@401,@403]];
+     [[yoyoAFHTTPSessionManager sharedManager] GET:API_SERVERTIME parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseServerTimeObject) {
+     
+         if(responseServerTimeObject[@"server_datetime"] != nil){
+             [[yoyoAFHTTPSessionManager sharedManager] GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
+                 
+                 [MBProgressHUD hideHUDForView:self.view animated:YES];
+                 
+                 self.lblSold.text = [[myDataManager getCurrentSessionPeriod:responseServerTimeObject[@"server_datetime"]] stringByReplacingOccurrencesOfString:@"%" withString:@" "];//[NSString stringWithFormat:@"%@", responseObject[@"sold_tickets"]];
+                 if([defaults objectForKey:[myDataManager getCurrentSessionPeriod:responseServerTimeObject[@"server_datetime"]]]){
+                     self.lblCheckins.text = [NSString stringWithFormat:@"%@", [defaults objectForKey:[myDataManager getCurrentSessionPeriod:responseServerTimeObject[@"server_datetime"]]]];//[NSString stringWithFormat:@"%@", responseObject[@"checked_tickets"]];
+                 }else{
+                     self.lblCheckins.text = @"0";
+                 }
+                 
+                 [defaults setObject:responseObject[@"event_name"] forKey:@"eventName"];
+                 [defaults setObject:responseObject[@"event_date_time"] forKey:@"eventDateTime"];
+                 [defaults setObject:responseObject[@"sold_tickets"] forKey:@"soldTickets"];
+                 [defaults setObject:responseObject[@"event_location"] forKey:@"eventLocation"];
+                 
+                 [defaults synchronize];
+                 
+             } failure:^(NSURLSessionTask *task, NSError *error) {
+                 [MBProgressHUD hideHUDForView:self.view animated:YES];
+                 
+                 UIAlertController *alert = [UIAlertController alertControllerWithTitle:[defaults objectForKey:@"ERROR"] message:[defaults objectForKey:@"ERROR_LOADING_DATA"] preferredStyle:UIAlertControllerStyleAlert];
+                 UIAlertAction *okAction = [UIAlertAction actionWithTitle:[defaults objectForKey:@"OK"] style:UIAlertActionStyleDefault handler:nil];
+                 [alert addAction:okAction];
+                 [self presentViewController:alert animated:YES completion:nil];
+             } retryCount:5 retryInterval:1.0 progressive:false fatalStatusCodes:@[@401,@403]];
+         }else{
+             UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"錯誤" message:@"系統時間讀取錯誤" preferredStyle:UIAlertControllerStyleAlert];
+             UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"確認" style:UIAlertActionStyleDefault handler:nil];
+             [alert addAction:okAction];
+             [self presentViewController:alert animated:YES completion:nil];
+         }
+         //
+     
+     } failure:^(NSURLSessionTask *task, NSError *error) {
+         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"錯誤" message:@"系統時間讀取錯誤" preferredStyle:UIAlertControllerStyleAlert];
+         UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"確認" style:UIAlertActionStyleDefault handler:nil];
+         [alert addAction:okAction];
+         [self presentViewController:alert animated:YES completion:nil];
+     } retryCount:5 retryInterval:1.0 progressive:false fatalStatusCodes:@[@401,@403]];
+    
 }
 
 - (IBAction)btnSearchOnClick:(UIBarButtonItem *)sender {

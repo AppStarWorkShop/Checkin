@@ -36,9 +36,14 @@
     self.lblEventTitle.text = [defaults stringForKey:@"eventName"];
     self.lblEventSubtitle.text = [defaults stringForKey:@"eventDateTime"];
     
+    /*
     self.workShopTitle1.text = @"掃化石 + 抱抱恐龍BB";
     self.workShopTitle2.text = @"化石清修室";
     self.workShopTitle3.text = @"復活任務";
+     */
+    self.workShopTitle1.text = @"考古巢穴";
+    self.workShopTitle2.text = @"化石清修室";
+    self.workShopTitle3.text = @"恐龍解碼任務";
 }
 
 - (void)didReceiveMemoryWarning
@@ -71,7 +76,7 @@
         //[defaults setValue:@"https://shopsolndemo.com/" forKey:@"apiUrl"];
         //[defaults setValue:@"315D1804" forKey:@"apiKey"];
         [defaults setValue:@"http://40.83.79.25" forKey:@"apiUrl"];
-        [defaults setValue:@"38BD7BA3" forKey:@"apiKey"];
+        [defaults setValue:@"935AB3B1" forKey:@"apiKey"];
         
         //[self login];
         
@@ -81,7 +86,7 @@
         //[defaults setValue:@"https://shopsolndemo.com/" forKey:@"apiUrl"];
         //[defaults setValue:@"315D1804" forKey:@"apiKey"];
         [defaults setValue:@"http://40.83.79.25" forKey:@"apiUrl"];
-        [defaults setValue:@"935AB3B1" forKey:@"apiKey"];
+        [defaults setValue:@"38BD7BA3" forKey:@"apiKey"];
         
         //[self login];
     }

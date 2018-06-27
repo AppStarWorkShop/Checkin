@@ -12,6 +12,8 @@
 #import <AFNetworking/AFNetworking.h>
 #import "AFHTTPSessionManager+RetryPolicy.h"
 #import "yoyoAFHTTPSessionManager.h"
+#import "myDataManager.h"
+#import "myConstant.h"
 
 @interface TicketViewController ()
 
@@ -99,22 +101,43 @@
     NSString *requestedUrl = [NSString stringWithFormat:@"%@/check_in/%@?ct_json", [defaults stringForKey:@"baseUrl"], ticketData[@"checksum"]];
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     AFHTTPSessionManager *manager = [yoyoAFHTTPSessionManager sharedManager];//[AFHTTPSessionManager manager];
-    [manager GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
-        [MBProgressHUD hideHUDForView:self.view animated:YES];
+    
+    [manager GET:API_SERVERTIME parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseServerTimeObject) {
         
-        NSLog(@"CHECKIN RESPONSE %@", responseObject);
-        
-        [self ticketCheckins];
-        if ([responseObject[@"status"] isEqualToNumber:@0]) {
-            [self showOverlayWithStatus:NO];
-            ticketStatus.text = @"- 未使用 -";
-            btnCheckin.hidden = NO;
-        } else {
-            [self showOverlayWithStatus:YES];
-            ticketStatus.text = @"- 已使用 -";
-            btnCheckin.hidden = YES;
+        if(responseServerTimeObject[@"server_datetime"] != nil){
+            [manager GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
+                
+                NSLog(@"CHECKIN RESPONSE %@", responseObject);
+                
+                //[self ticketCheckins];
+                if ([responseObject[@"status"] isEqualToNumber:@0]) {
+                    [self showOverlayWithStatus:NO];
+                    ticketStatus.text = @"- 未使用 -";
+                    btnCheckin.hidden = NO;
+                } else {
+     
+                    if(![defaults objectForKey:[myDataManager getCurrentSessionPeriod:responseServerTimeObject[@"server_datetime"]]]){
+                        [defaults setInteger:1 forKey:[myDataManager getCurrentSessionPeriod:responseServerTimeObject[@"server_datetime"]]];
+                        
+                    }else{
+                        NSInteger TicketsCheckIn = [[defaults objectForKey:[myDataManager getCurrentSessionPeriod:responseServerTimeObject[@"server_datetime"]]] integerValue];
+                        TicketsCheckIn += 1;
+                        [defaults setInteger:TicketsCheckIn forKey:[myDataManager getCurrentSessionPeriod:responseServerTimeObject[@"server_datetime"]]];
+                        
+                    }
+                    
+                    [self showOverlayWithStatus:YES];
+                    ticketStatus.text = @"- 已使用 -";
+                    btnCheckin.hidden = YES;
+                    
+                }
+                
+            } failure:^(NSURLSessionTask *task, NSError *error) {
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
+                [self showOverlayWithStatus:NO];
+            } retryCount:5 retryInterval:1.0 progressive:false fatalStatusCodes:@[@401, @403]];
         }
-        
     } failure:^(NSURLSessionTask *task, NSError *error) {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
         [self showOverlayWithStatus:NO];

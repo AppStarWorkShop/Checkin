@@ -12,6 +12,8 @@
 #import <MBProgressHUD/MBProgressHUD.h>
 #import "AFHTTPSessionManager+RetryPolicy.h"
 #import "yoyoAFHTTPSessionManager.h"
+#import "myDataManager.h"
+#import "myConstant.h"
 
 @interface ScannerViewController ()
     @property (nonatomic, strong) AVCaptureSession *captureSession;
@@ -60,7 +62,7 @@
 -(void)viewDidAppear:(BOOL)animated {
     [self continueScanning];
     
-    //[self checkinWithCode:@"SHK000037"];
+    //[self checkinWithCode:@"SHK000143"];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -180,6 +182,7 @@
 //- (void)showOverlayWithStatus:(BOOL)status
 - (void)showOverlayWithStatus:(NSString*)status
 {
+    [MBProgressHUD hideHUDForView:self.view animated:YES];
     //checkinStatus = status;
     //if(status == YES) {
     if([status isEqualToString:@"1"]) {
@@ -224,41 +227,63 @@
     
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     AFHTTPSessionManager *manager = [yoyoAFHTTPSessionManager sharedManager];//[AFHTTPSessionManager manager];
-    [manager GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
-        [MBProgressHUD hideHUDForView:self.view animated:YES];
-        //NSArray *responseData = [[NSArray alloc] initWithArray:responseObject];
-        //NSDictionary *responseData = [[NSArray alloc] initWithArray:responseObject];
-        NSLog(@"%@", responseObject);
-        self.ticketID.text = checksum;
-        checkinData = [responseObject mutableCopy];
+    
+    [manager GET:API_SERVERTIME parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseServerTimeObject) {
         
-        if (![responseObject isKindOfClass:[NSNull class]] && [responseObject count] > 0) {
-            NSArray *tempObj = [responseObject[@"custom_fields"] mutableCopy];
-            self.buyerEmail.text = [tempObj objectAtIndex:tempObj.count-1][1];
-            [checkinData setValue:[tempObj objectAtIndex:tempObj.count-1][1] forKey:@"buyerEmail"];
-        }
         
-        if([responseObject[@"status"] boolValue]) {
-            NSDateFormatter *printFormatter = [[NSDateFormatter alloc] init];
-            [printFormatter setDateFormat:@"dd.MM.yyyy"];
-            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-            [dateFormatter setLocale:[NSLocale localeWithLocaleIdentifier:@"en_GB"]];
-            [dateFormatter setDateFormat:@"MMMM dd, yyyy hh:mm a"];
-            NSDate *dateObj = [dateFormatter dateFromString:responseObject[@"payment_date"]];
-            [checkinData setValue:[printFormatter stringFromDate:dateObj] forKey:@"date"];
-            [checkinData setValue:checksum forKey:@"checksum"];
+        if(responseServerTimeObject[@"server_datetime"] != nil){
+            [manager GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
+                NSLog(@"%@", responseObject);
+                self.ticketID.text = checksum;
+                checkinData = [responseObject mutableCopy];
+                
+                if (![responseObject isKindOfClass:[NSNull class]] && [responseObject count] > 0) {
+                    NSArray *tempObj = [responseObject[@"custom_fields"] mutableCopy];
+                    self.buyerEmail.text = [tempObj objectAtIndex:tempObj.count-1][1];
+                    [checkinData setValue:[tempObj objectAtIndex:tempObj.count-1][1] forKey:@"buyerEmail"];
+                }
+                
+                if([responseObject[@"status"] boolValue]) {
+                    NSDateFormatter *printFormatter = [[NSDateFormatter alloc] init];
+                    [printFormatter setDateFormat:@"dd.MM.yyyy"];
+                    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+                    [dateFormatter setLocale:[NSLocale localeWithLocaleIdentifier:@"en_GB"]];
+                    [dateFormatter setDateFormat:@"MMMM dd, yyyy hh:mm a"];
+                    NSDate *dateObj = [dateFormatter dateFromString:responseObject[@"payment_date"]];
+                    [checkinData setValue:[printFormatter stringFromDate:dateObj] forKey:@"date"];
+                    [checkinData setValue:checksum forKey:@"checksum"];
+                    
+                    [defaults setValue:[checkinData objectForKey:@"checksum"] forKey:@"ticketNo"];
+                    [defaults setValue:[checkinData objectForKey:@"buyerEmail"] forKey:@"buyerEmail"];
+                    [defaults setValue:responseObject[@"payment_date"] forKey:@"ticketDate"];
+                    NSLog(@"%@", defaults);
+                    
+                    if(![defaults objectForKey:[myDataManager getCurrentSessionPeriod:responseServerTimeObject[@"server_datetime"]]]){
+                        [defaults setInteger:1 forKey:[myDataManager getCurrentSessionPeriod:responseServerTimeObject[@"server_datetime"]]];
+                        
+                    }else{
+                        NSInteger TicketsCheckIn = [[defaults objectForKey:[myDataManager getCurrentSessionPeriod:responseServerTimeObject[@"server_datetime"]]] integerValue];
+                        TicketsCheckIn += 1;
+                        [defaults setInteger:TicketsCheckIn forKey:[myDataManager getCurrentSessionPeriod:responseServerTimeObject[@"server_datetime"]]];
+                        
+                    }
+                    
+                    [self showOverlayWithStatus:@"1"];
+
+                } else {
+                    [checkinData setValue:checksum forKey:@"checksum"];
+                    [self showOverlayWithStatus:@"2"];
+                    
+                }
             
-            [defaults setValue:[checkinData objectForKey:@"checksum"] forKey:@"ticketNo"];
-            [defaults setValue:[checkinData objectForKey:@"buyerEmail"] forKey:@"buyerEmail"];
-            [defaults setValue:responseObject[@"payment_date"] forKey:@"ticketDate"];
-            NSLog(@"%@", defaults);
-            
-            [self showOverlayWithStatus:@"1"];
-        //} else if(responseData.count>0 && [responseData[0][@"data"][@"status"] isEqualToString:@"Fail"]) {
-        } else {
-            [checkinData setValue:checksum forKey:@"checksum"];
-            [self showOverlayWithStatus:@"2"];
-            
+             
+            } failure:^(NSURLSessionTask *task, NSError *error) {
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
+                [self showOverlayWithStatus:@"0"];
+            }];
+        }else{
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
         }
         
     } failure:^(NSURLSessionTask *task, NSError *error) {
