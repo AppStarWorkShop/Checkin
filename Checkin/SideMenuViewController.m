@@ -8,6 +8,7 @@
 
 #import "SideMenuViewController.h"
 #import "SWRevealViewController.h"
+#import "myConstant.h"
 
 @interface SideMenuViewController ()
 
@@ -65,7 +66,7 @@
         [defaults setBool:YES forKey:@"logged"];
         //[defaults setValue:@"https://shopsolndemo.com/" forKey:@"apiUrl"];
         //[defaults setValue:@"315D1804" forKey:@"apiKey"];
-        [defaults setValue:@"http://40.83.79.25" forKey:@"apiUrl"];
+        [defaults setValue:API_DOMAIN_1 forKey:@"apiUrl"];
         [defaults setValue:@"2A7B217C" forKey:@"apiKey"];
         
         //[self login];
@@ -75,7 +76,7 @@
         [defaults setBool:YES forKey:@"logged"];
         //[defaults setValue:@"https://shopsolndemo.com/" forKey:@"apiUrl"];
         //[defaults setValue:@"315D1804" forKey:@"apiKey"];
-        [defaults setValue:@"http://40.83.79.25" forKey:@"apiUrl"];
+        [defaults setValue:API_DOMAIN_1 forKey:@"apiUrl"];
         [defaults setValue:@"935AB3B1" forKey:@"apiKey"];
         
         //[self login];
@@ -85,7 +86,7 @@
         [defaults setBool:YES forKey:@"logged"];
         //[defaults setValue:@"https://shopsolndemo.com/" forKey:@"apiUrl"];
         //[defaults setValue:@"315D1804" forKey:@"apiKey"];
-        [defaults setValue:@"http://40.83.79.25" forKey:@"apiUrl"];
+        [defaults setValue:API_DOMAIN_1 forKey:@"apiUrl"];
         [defaults setValue:@"38BD7BA3" forKey:@"apiKey"];
         
         //[self login];

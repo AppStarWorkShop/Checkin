@@ -230,7 +230,6 @@
     
     [manager GET:API_SERVERTIME parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseServerTimeObject) {
         
-        
         if(responseServerTimeObject[@"server_datetime"] != nil){
             [manager GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
                 [MBProgressHUD hideHUDForView:self.view animated:YES];

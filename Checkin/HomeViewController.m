@@ -62,21 +62,21 @@
     if( [[defaults objectForKey:@"workShopNumber"] integerValue] == 1 ){
         self.workShopCover.image = [UIImage imageNamed:@"bg_ws01.png"];
         //self.workShopTitle.text = @"工作坊 // #1 - 掃化石 + 抱抱恐龍BB";
-        self.workShopTitle.text = @"工作坊 // #1 - 考古巢穴";
+        self.workShopTitle.text = [NSString stringWithFormat:@"%@ (%@)", @"工作坊 // #1 - 考古巢穴", [defaults objectForKey:@"apiKey"]];
         //[defaults setValue:@"掃化石 + 抱抱恐龍BB" forKey:@"workShopName"];
         [defaults setValue:@"考古巢穴" forKey:@"workShopName"];
         [defaults setValue:@"工作坊1" forKey:@"workShopAvenue"];
         
     }else if( [[defaults objectForKey:@"workShopNumber"] integerValue] == 2 ){
         self.workShopCover.image = [UIImage imageNamed:@"bg_ws02.png"];
-        self.workShopTitle.text = @"工作坊 // #2 - 化石清修室";
+        self.workShopTitle.text = [NSString stringWithFormat:@"%@ (%@)", @"工作坊 // #2 - 化石清修室", [defaults objectForKey:@"apiKey"]];
         [defaults setValue:@"化石清修室" forKey:@"workShopName"];
         [defaults setValue:@"工作坊2" forKey:@"workShopAvenue"];
         
     }else{
         self.workShopCover.image = [UIImage imageNamed:@"bg_ws03.png"];
         //self.workShopTitle.text = @"工作坊 // #3 - 復活任務";
-        self.workShopTitle.text = @"工作坊 // #3 - 恐龍解碼任務";
+        self.workShopTitle.text = [NSString stringWithFormat:@"%@ (%@)", @"工作坊 // #3 - 恐龍解碼任務", [defaults objectForKey:@"apiKey"]];
         //[defaults setValue:@"復活任務" forKey:@"workShopName"];
         [defaults setValue:@"恐龍解碼任務" forKey:@"workShopName"];
         [defaults setValue:@"工作坊3" forKey:@"workShopAvenue"];
