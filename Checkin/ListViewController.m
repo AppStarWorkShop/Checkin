@@ -16,6 +16,7 @@
 #import "UIScrollView+InfiniteScroll.h"
 #import "AFHTTPSessionManager+RetryPolicy.h"
 #import "yoyoAFHTTPSessionManager.h"
+#import "myDataManager.h"
 
 @interface ListViewController ()
 @end
@@ -110,17 +111,19 @@
 
             }
             
-            for (i=0; i < [dataObject count]-1; i++) {
-                NSMutableDictionary *tempData = [dataObject objectAtIndex:i];
-                NSMutableDictionary *tempObj = [tempData[@"data"] mutableCopy];
-                NSArray *tempObjl2 = [tempObj[@"custom_fields"] mutableCopy];
-                //NSLog(@"%@",[tempObjl2 objectAtIndex:tempObjl2.count-1][1]);
-                
-                [tempObj setValue:[NSString stringWithFormat:@"%@", [tempObjl2 objectAtIndex:tempObjl2.count-1][1]] forKey:@"name"];
-                //[tempObj setValue:[NSString stringWithFormat:@"%@ %@", tempObj[@"buyer_first"], tempObj[@"buyer_last"]] forKey:@"name"];
-                //[tempObj setValue:[NSString stringWithFormat:@"%@", tempObjl2[@"Buyer E-mail"]] forKey:@"name"];
-                [listItems addObject:tempObj];
+            if([dataObject count]>0){
+                for (i=0; i < [dataObject count]-1; i++) {
+                    NSMutableDictionary *tempData = [dataObject objectAtIndex:i];
+                    NSMutableDictionary *tempObj = [tempData[@"data"] mutableCopy];
+                    NSArray *tempObjl2 = [tempObj[@"custom_fields"] mutableCopy];
+                    //NSLog(@"%@",[tempObjl2 objectAtIndex:tempObjl2.count-1][1]);
                     
+                    [tempObj setValue:[NSString stringWithFormat:@"%@", [tempObjl2 objectAtIndex:tempObjl2.count-1][1]] forKey:@"name"];
+                    //[tempObj setValue:[NSString stringWithFormat:@"%@ %@", tempObj[@"buyer_first"], tempObj[@"buyer_last"]] forKey:@"name"];
+                    //[tempObj setValue:[NSString stringWithFormat:@"%@", tempObjl2[@"Buyer E-mail"]] forKey:@"name"];
+                    [listItems addObject:tempObj];
+                    
+                }
             }
         }
         [tblTickets reloadData];
@@ -215,9 +218,41 @@
     [defaults setValue:[NSString stringWithFormat:@"%@", ticketDict[@"name"]] forKey:@"buyerEmail"];
     [defaults setValue:ticketDict[@"payment_date"] forKey:@"ticketDate"];
 
-    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    [self performSegueWithIdentifier:@"showDetails" sender:nil];
+    //[MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    
+    [self getTicketTimeByCode:ticketDict[@"checksum"]];
+}
 
+- (void)getTicketTimeByCode:(NSString*)checksum
+{
+    NSString *requestedUrl = [NSString stringWithFormat:@"%@/check_in/%@&?ct_json", [defaults stringForKey:@"baseUrl"], checksum];
+    
+    if([NSURL URLWithString:requestedUrl] == nil) {
+        return;
+    }
+    
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    AFHTTPSessionManager *manager = [yoyoAFHTTPSessionManager sharedManager];
+    
+    [manager GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
+        
+        if (![responseObject isKindOfClass:[NSNull class]] && ![responseObject[@"ticketTime"] isEqualToString:@""]) {
+            NSString *dateFromAPI = [responseObject[@"ticketTime"] stringByReplacingOccurrencesOfString:@"(" withString:@""];
+            dateFromAPI = [dateFromAPI stringByReplacingOccurrencesOfString:@")" withString:@""];
+            
+            NSArray *dateItems = [[dateFromAPI stringByReplacingOccurrencesOfString:@" - " withString:@" "] componentsSeparatedByString:@" "];
+            NSString *date = [NSString stringWithFormat:@"%@", [dateItems[1] stringByReplacingOccurrencesOfString:@"-" withString:@"/"]];
+            NSString *time = [NSString stringWithFormat:@"%@", dateItems[2]];
+            NSString *ticketTime = [myDataManager getCurrentSessionPeriod:[NSString stringWithFormat:@"%@ %@", date, time]];
+            [defaults setValue:[NSString stringWithFormat:@"%@", [ticketTime stringByReplacingOccurrencesOfString:@"%" withString:@" "]] forKey:@"ticketTime"];
+            
+            [self performSegueWithIdentifier:@"showDetails" sender:nil];
+        }
+        
+    } failure:^(NSURLSessionTask *task, NSError *error) {
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
+    }];
 }
 
 #pragma mark - Search

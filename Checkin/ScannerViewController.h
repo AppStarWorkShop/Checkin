@@ -23,5 +23,10 @@
 @property (weak, nonatomic) IBOutlet UILabel *buyerEmail;
 @property (weak, nonatomic) IBOutlet UILabel *ticketID;
 @property (weak, nonatomic) IBOutlet UILabel *ticketIdLabel;
+@property (weak, nonatomic) IBOutlet UILabel *ticketDesc;
+
+@property (weak, nonatomic) IBOutlet UIButton *confirmCheckinBtn;
+@property (weak, nonatomic) IBOutlet UIButton *cancelCheckinBtn;
+@property (weak, nonatomic) IBOutlet UIButton *confirmBtn;
 
 @end

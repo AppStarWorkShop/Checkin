@@ -246,7 +246,7 @@
         ticketDate.text = [defaults objectForKey:@"ticketDate"];
         workShopVenue.text = [defaults objectForKey:@"eventLocation"];
         workShopName.text = [defaults objectForKey:@"eventName"];
-        workShopHour.text = @"TBC";
+        workShopHour.text = [defaults objectForKey:@"ticketTime"];
         workShopDate.text = [defaults objectForKey:@"eventDateTime"];
         buyerNumber.text = @"1";
         

@@ -31,7 +31,7 @@
     BOOL checkinStatus;
     __weak IBOutlet UINavigationItem *navItem;
 }
-@synthesize captureSession, videoPreviewLayer, viewPreview, audioPlayer, btnFlash, btnCancel, imgStatusIcon, lblStatusTitle, lblStatusText, buyerEmail, ticketID, ticketIdLabel;
+@synthesize captureSession, videoPreviewLayer, viewPreview, audioPlayer, btnFlash, btnCancel, imgStatusIcon, lblStatusTitle, lblStatusText, buyerEmail, ticketID, ticketIdLabel, ticketDesc, confirmCheckinBtn, cancelCheckinBtn, confirmBtn;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -42,7 +42,7 @@
     }
     
     //navItem.title = [defaults objectForKey:@"APP_TITLE"];
-    [btnCancel setTitle:[defaults objectForKey:@"CANCEL"] forState:UIControlStateNormal];
+    [btnCancel setTitle:@"返回"/*[defaults objectForKey:@"CANCEL"]*/ forState:UIControlStateNormal];
     
     supportedMetaTypes = @[
                    AVMetadataObjectTypeQRCode,
@@ -62,7 +62,7 @@
 -(void)viewDidAppear:(BOOL)animated {
     [self continueScanning];
     
-    //[self checkinWithCode:@"SHK000143"];
+    //[self checkTicketTimeWithCode:@"SHK000385"];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -81,7 +81,7 @@
         if([supportedMetaTypes containsObject:[metadataObject type]]) {
 //            NSLog(@"READ VALUE: %@", [metadataObject stringValue]);
             [self performSelectorOnMainThread:@selector(stopScanning) withObject:nil waitUntilDone:NO];
-            [self performSelectorOnMainThread:@selector(checkinWithCode:) withObject:[metadataObject stringValue] waitUntilDone:NO];
+            [self performSelectorOnMainThread:@selector(checkTicketTimeWithCode:/*checkinWithCode:*/) withObject:[metadataObject stringValue] waitUntilDone:NO];
         }
         
         if(audioPlayer) {
@@ -197,6 +197,30 @@
         lblStatusText.text = [defaults objectForKey:@"ERROR_MESSAGE"];
         checkinStatus = NO;
         
+    } else if([status isEqualToString:@"3"]) {
+        imgStatusIcon.image = [UIImage imageNamed:@"ic_popup_due"];
+        lblStatusTitle.text = @"門票不属于當前時段,是否仍然使用？";//[defaults objectForKey: @"ERROR"];
+        lblStatusText.text = [defaults objectForKey:@"ERROR_MESSAGE"];
+        checkinStatus = NO;
+        
+    } else if([status isEqualToString:@"4"]) {
+        imgStatusIcon.image = [UIImage imageNamed:@"ic_popup_scanned"];
+        lblStatusTitle.text = @"門票時段格式不正確！請使用新門票！";//[defaults objectForKey: @"ERROR"];
+        lblStatusText.text = [defaults objectForKey:@"ERROR_MESSAGE"];
+        checkinStatus = NO;
+        
+    } else if([status isEqualToString:@"5"]) {
+        imgStatusIcon.image = [UIImage imageNamed:@"ic_popup_overtime"];
+        lblStatusTitle.text = @"門票已過期！";//[defaults objectForKey: @"ERROR"];
+        lblStatusText.text = [defaults objectForKey:@"ERROR_MESSAGE"];
+        checkinStatus = NO;
+        
+    } else if([status isEqualToString:@"6"]) {
+        imgStatusIcon.image = [UIImage imageNamed:@"ic_popup_due"];
+        lblStatusTitle.text = @"門票不属于當前時段！";//[defaults objectForKey: @"ERROR"];
+        lblStatusText.text = [defaults objectForKey:@"ERROR_MESSAGE"];
+        checkinStatus = NO;
+        
     } else {
         imgStatusIcon.image = [UIImage imageNamed:@"ic_popup_scanned"];
         lblStatusTitle.text = [NSString stringWithFormat:@"%@", @"門票信息無效"];//[defaults objectForKey: @"ERROR"];
@@ -210,13 +234,119 @@
     [self.viewOverlayWrapper setHidden:NO];
 }
 
--(void)checkinWithCode:(NSString*)checksum
+-(void)checkTicketTimeWithCode:(NSString*)checksum
 {
     if([checksum containsString:@"|"]) {
         NSArray *ticketArray = [checksum componentsSeparatedByString:@"|"];
         checksum = [ticketArray objectAtIndex:[ticketArray count]-1];
     }
 
+    NSString *requestedUrl = [NSString stringWithFormat:@"%@/check_in/%@&?ct_json", [defaults stringForKey:@"baseUrl"], checksum];
+    
+    if([NSURL URLWithString:requestedUrl] == nil) {
+        [self showOverlayWithStatus:@"0"];
+        return;
+    }
+    
+    [defaults setValue:checksum forKey:@"ticketCode"];
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    AFHTTPSessionManager *manager = [yoyoAFHTTPSessionManager sharedManager];
+    
+    [manager GET:API_SERVERTIME parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseServerTimeObject) {
+        
+        if(responseServerTimeObject[@"server_datetime"] != nil){
+            [manager GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
+                
+                if (![responseObject isKindOfClass:[NSNull class]] && ![responseObject[@"ticketTime"] isEqualToString:@""]) {
+                    NSString *dateFromAPI = [responseObject[@"ticketTime"] stringByReplacingOccurrencesOfString:@"(" withString:@""];
+                    dateFromAPI = [dateFromAPI stringByReplacingOccurrencesOfString:@")" withString:@""];
+                    
+                    NSArray *dateItems = [[dateFromAPI stringByReplacingOccurrencesOfString:@" - " withString:@" "] componentsSeparatedByString:@" "];
+                    NSString *date = [NSString stringWithFormat:@"%@", [dateItems[1] stringByReplacingOccurrencesOfString:@"-" withString:@"/"]];
+                    NSString *time = [NSString stringWithFormat:@"%@", dateItems[2]];
+                    
+                    NSDateFormatter * dateFormatter = [[NSDateFormatter alloc]init];
+                    [dateFormatter setDateFormat:@"yyyy/MM/dd"];
+                    NSDateFormatter * timeFormatter = [[NSDateFormatter alloc]init];
+                    [timeFormatter setDateFormat:@"HH:mm"];
+                    
+                    if([dateFormatter dateFromString:date] && [timeFormatter dateFromString:time]){
+                        NSString *ticketTime = [myDataManager getCurrentSessionPeriod:[NSString stringWithFormat:@"%@ %@", date, time]];
+                        NSString *currentTime = [myDataManager getCurrentSessionPeriod:responseServerTimeObject[@"server_datetime"]];
+                        NSLog(@"ticket time: %@", ticketTime);
+                        NSLog(@"current server time: %@", currentTime);
+                        [defaults setValue:[NSString stringWithFormat:@"%@", [ticketTime stringByReplacingOccurrencesOfString:@"%" withString:@" "]] forKey:@"ticketTime"];
+                        
+                        if ([ticketTime isEqualToString:currentTime]) {
+                            [self checkinWithCode:checksum];
+                            
+                        }else{
+                            //need Staff to confirm if let enter, only in the same day can let in
+                            self.ticketID.text = @"";
+                            self.buyerEmail.text = @"門票適用時段:";
+                            self.ticketIdLabel.text = [NSString stringWithFormat:@"%@", [ticketTime stringByReplacingOccurrencesOfString:@"%" withString:@" "]];
+                            
+                            NSLog(@"ticket Date(d): %@", [dateFormatter dateFromString:date]);
+                            NSLog(@"ticket Date(d): %@", [dateFormatter dateFromString:[responseServerTimeObject[@"server_datetime"] componentsSeparatedByString:@" "][0]]);
+                            
+                            NSLog(@"ticket Date(s): %@", date);
+                            NSLog(@"current Date(s): %@", [responseServerTimeObject[@"server_datetime"] componentsSeparatedByString:@" "][0]);
+                            NSLog(@"current Date(c): %d", [[[dateFormatter dateFromString:date] earlierDate:[dateFormatter dateFromString:[responseServerTimeObject[@"server_datetime"] componentsSeparatedByString:@" "][0]]] isEqualToDate:[dateFormatter dateFromString:date]]);
+                            
+                            if([[dateFormatter dateFromString:date] isEqualToDate:[dateFormatter dateFromString:[responseServerTimeObject[@"server_datetime"] componentsSeparatedByString:@" "][0]]]) {
+                                self.confirmCheckinBtn.hidden = NO;
+                                self.cancelCheckinBtn.hidden = NO;
+                                self.confirmBtn.hidden = YES;
+                                
+                                [self showOverlayWithStatus:@"3"];
+                                
+                            }else if([[[dateFormatter dateFromString:date] earlierDate:[dateFormatter dateFromString:[responseServerTimeObject[@"server_datetime"] componentsSeparatedByString:@" "][0]]] isEqualToDate:[dateFormatter dateFromString:date]]){
+                                [self showOverlayWithStatus:@"5"];
+                            
+                            }else if([[[dateFormatter dateFromString:date] laterDate:[dateFormatter dateFromString:[responseServerTimeObject[@"server_datetime"] componentsSeparatedByString:@" "][0]]] isEqualToDate:[dateFormatter dateFromString:date]]){
+                                [self showOverlayWithStatus:@"6"];
+                            
+                            }/*else{
+                                self.confirmCheckinBtn.hidden = NO;
+                                self.cancelCheckinBtn.hidden = NO;
+                                self.confirmBtn.hidden = YES;
+                                
+                                [self showOverlayWithStatus:@"3"];
+                            }*/
+                        }
+                    }else{
+                        //need Staff to confirm if let enter
+                        self.ticketID.text = @"";
+                        self.buyerEmail.text = @"新門票樣式：";
+                        self.ticketIdLabel.text = @"考古巢穴 2018-07-03 (16:30 - 16:40)";
+                        
+                        [self showOverlayWithStatus:@"4"];
+                        
+                    }
+                }
+            
+            } failure:^(NSURLSessionTask *task, NSError *error) {
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
+                [self showOverlayWithStatus:@"0"];
+            }];
+        }else{
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
+        }
+        
+    } failure:^(NSURLSessionTask *task, NSError *error) {
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
+        [self showOverlayWithStatus:@"0"];
+    }];
+}
+
+-(void)checkinWithCode:(NSString*)checksum
+{
+    if([checksum containsString:@"|"]) {
+        NSArray *ticketArray = [checksum componentsSeparatedByString:@"|"];
+        checksum = [ticketArray objectAtIndex:[ticketArray count]-1];
+    }
+    
     NSString *requestedUrl = [NSString stringWithFormat:@"%@/check_in/%@?ct_json", [defaults stringForKey:@"baseUrl"], checksum];
     NSLog(@"Scan URL: %@", requestedUrl);
     
@@ -241,9 +371,11 @@
                     NSArray *tempObj = [responseObject[@"custom_fields"] mutableCopy];
                     self.buyerEmail.text = [tempObj objectAtIndex:tempObj.count-1][1];
                     [checkinData setValue:[tempObj objectAtIndex:tempObj.count-1][1] forKey:@"buyerEmail"];
+                    
                 }
                 
                 if([responseObject[@"status"] boolValue]) {
+                    
                     NSDateFormatter *printFormatter = [[NSDateFormatter alloc] init];
                     [printFormatter setDateFormat:@"dd.MM.yyyy"];
                     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
@@ -269,14 +401,32 @@
                     }
                     
                     [self showOverlayWithStatus:@"1"];
-
+                    
                 } else {
-                    [checkinData setValue:checksum forKey:@"checksum"];
-                    [self showOverlayWithStatus:@"2"];
+                    
+                    [manager GET:[NSString stringWithFormat:@"%@/ticket_checkins/%@?ct_json", [defaults stringForKey:@"baseUrl"], checksum] parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
+                        
+                        NSArray *checkinsArray = [[NSArray alloc] initWithArray:responseObject];
+                        
+                        for(int i=0;i<checkinsArray.count;i++){
+                            if([checkinsArray[i][@"data"][@"status"] isEqualToString:@"Pass"]) {
+                                self.ticketDesc.text = [NSString stringWithFormat:@"使用時間:%@", checkinsArray[0][@"data"][@"date_checked"]];
+                                self.ticketDesc.hidden = NO;
+                            }
+                        }
+                    
+                        [checkinData setValue:checksum forKey:@"checksum"];
+                        [self showOverlayWithStatus:@"2"];
+                        
+                    } failure:^(NSURLSessionTask *task, NSError *error) {
+                        UIAlertController *alert = [UIAlertController alertControllerWithTitle:[defaults objectForKey:@"ERROR"] message:[defaults objectForKey:@"ERROR_LOADING_DATA"] preferredStyle:UIAlertControllerStyleAlert];
+                        UIAlertAction *okAction = [UIAlertAction actionWithTitle:[defaults objectForKey:@"OK"] style:UIAlertActionStyleDefault handler:nil];
+                        [alert addAction:okAction];
+                        [self presentViewController:alert animated:YES completion:nil];
+                    } retryCount:5 retryInterval:1.0 progressive:false fatalStatusCodes:@[@401, @403]];
                     
                 }
-            
-             
+                
             } failure:^(NSURLSessionTask *task, NSError *error) {
                 [MBProgressHUD hideHUDForView:self.view animated:YES];
                 [self showOverlayWithStatus:@"0"];
@@ -290,6 +440,31 @@
         [self showOverlayWithStatus:@"0"];
     }];
 }
+
+- (IBAction)confirmCheckinOnClick:(UIButton *)sender {
+    self.confirmCheckinBtn.hidden = YES;
+    self.cancelCheckinBtn.hidden = YES;
+    self.confirmBtn.hidden = NO;
+    [self.viewOverlayWrapper setHidden:YES];
+    self.ticketID.hidden = NO;
+    self.ticketIdLabel.hidden = NO;
+    self.ticketIdLabel.text = @"門票號碼:";
+    
+    [self checkinWithCode:[NSString stringWithFormat:@"%@", [defaults objectForKey:@"ticketCode"]]];
+}
+
+- (IBAction)cancelCheckinOnClick:(UIButton *)sender {
+    self.confirmCheckinBtn.hidden = YES;
+    self.cancelCheckinBtn.hidden = YES;
+    self.confirmBtn.hidden = NO;
+    self.ticketID.hidden = NO;
+    self.ticketIdLabel.hidden = NO;
+    self.ticketIdLabel.text = @"門票號碼:";
+    
+    [self.viewOverlayWrapper setHidden:YES];
+    [self continueScanning];
+}
+
 
 #pragma mark - Navigation
 
@@ -308,6 +483,7 @@
     } else {
         self.ticketID.hidden = NO;
         self.ticketIdLabel.hidden = NO;
+        self.lblStatusText.hidden = YES;
         [self continueScanning];
     }
 }
