@@ -26,6 +26,7 @@
 
 @property (weak, nonatomic) IBOutlet UIImageView *workShopCover;
 @property (weak, nonatomic) IBOutlet UILabel *workShopTitle;
+@property (weak, nonatomic) IBOutlet UILabel *ticketSoldInPeriod;
 
 @end
 

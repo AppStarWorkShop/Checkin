@@ -555,7 +555,7 @@
 				DEVELOPMENT_TEAM = Y26L3GTLDL;
 				INFOPLIST_FILE = Checkin/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.pacmobile.ticketyoyo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pacmobile.ticketyoyo7559;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -574,7 +574,7 @@
 				DEVELOPMENT_TEAM = Y26L3GTLDL;
 				INFOPLIST_FILE = Checkin/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.pacmobile.ticketyoyo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pacmobile.ticketyoyo7559;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";

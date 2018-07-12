@@ -14,7 +14,7 @@
 #import "yoyoAFHTTPSessionManager.h"
 #import "myDataManager.h"
 #import "myConstant.h"
-
+int test = true;
 @interface ScannerViewController ()
     @property (nonatomic, strong) AVCaptureSession *captureSession;
     @property (nonatomic, strong) AVCaptureVideoPreviewLayer *videoPreviewLayer;
@@ -79,7 +79,7 @@
     if(metadataObjects != nil && [metadataObjects count] > 0) {
         AVMetadataMachineReadableCodeObject *metadataObject = [metadataObjects objectAtIndex:0];
         if([supportedMetaTypes containsObject:[metadataObject type]]) {
-//            NSLog(@"READ VALUE: %@", [metadataObject stringValue]);
+            NSLog(@"READ VALUE: %@", [metadataObject stringValue]);
             [self performSelectorOnMainThread:@selector(stopScanning) withObject:nil waitUntilDone:NO];
             [self performSelectorOnMainThread:@selector(checkTicketTimeWithCode:/*checkinWithCode:*/) withObject:[metadataObject stringValue] waitUntilDone:NO];
         }
@@ -147,8 +147,7 @@
 //    videoPreviewLayer.frame = viewPreview.layer.bounds;
     [viewPreview.layer addSublayer:videoPreviewLayer];
     
-    [captureSession startRunning];
-    
+    //[captureSession startRunning];
         
     return YES;
 }
@@ -183,6 +182,7 @@
 - (void)showOverlayWithStatus:(NSString*)status
 {
     [MBProgressHUD hideHUDForView:self.view animated:YES];
+
     //checkinStatus = status;
     //if(status == YES) {
     if([status isEqualToString:@"1"]) {
@@ -280,7 +280,7 @@
                         
                         if ([ticketTime isEqualToString:currentTime]) {
                             [self checkinWithCode:checksum];
-                            
+                        
                         }else{
                             //need Staff to confirm if let enter, only in the same day can let in
                             self.ticketID.text = @"";
@@ -415,6 +415,7 @@
                             }
                         }
                     
+                        self.ticketIdLabel.text = @"門票號碼:";
                         [checkinData setValue:checksum forKey:@"checksum"];
                         [self showOverlayWithStatus:@"2"];
                         

@@ -115,6 +115,7 @@
                     [self showOverlayWithStatus:NO];
                     ticketStatus.text = @"- 未使用 -";
                     btnCheckin.hidden = NO;
+                    
                 } else {
      
                     if(![defaults objectForKey:[myDataManager getCurrentSessionPeriod:responseServerTimeObject[@"server_datetime"]]]){
@@ -246,8 +247,18 @@
         ticketDate.text = [defaults objectForKey:@"ticketDate"];
         workShopVenue.text = [defaults objectForKey:@"eventLocation"];
         workShopName.text = [defaults objectForKey:@"eventName"];
-        workShopHour.text = [defaults objectForKey:@"ticketTime"];
-        workShopDate.text = [defaults objectForKey:@"eventDateTime"];
+        
+        NSArray *datetime =[[NSString stringWithFormat:@"%@", [defaults objectForKey:@"ticketTime"]] componentsSeparatedByString:@" "];
+        if([datetime count] > 3) {
+            workShopHour.text = [NSString stringWithFormat:@"%@ - %@", datetime[1], datetime[3]];
+            workShopDate.text = datetime[0];//[defaults objectForKey:@"eventDateTime"];
+        
+        }else{
+            workShopHour.text = [defaults objectForKey:@"ticketTime"];
+            workShopDate.text = [defaults objectForKey:@"ticketTime"];
+        
+        }
+        
         buyerNumber.text = @"1";
         
         

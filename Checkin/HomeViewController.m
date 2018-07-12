@@ -26,7 +26,7 @@
     __weak IBOutlet UILabel *lblCheckedIn;
     
 }
-@synthesize btnBurger, btnSearch;
+@synthesize btnBurger, btnSearch, ticketSoldInPeriod;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -275,17 +275,32 @@
 {
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     
-    NSString *requestedUrl = [NSString stringWithFormat:@"%@/event_essentials?ct_json", [defaults stringForKey:@"baseUrl"]];
-    NSLog(@"Event Detail URL: %@", requestedUrl);
-    
      [[yoyoAFHTTPSessionManager sharedManager] GET:API_SERVERTIME parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseServerTimeObject) {
      
          if(responseServerTimeObject[@"server_datetime"] != nil){
+             NSArray *eventDateTimes = [[myDataManager getCurrentSessionPeriod:responseServerTimeObject[@"server_datetime"]] componentsSeparatedByString:@"%"];
+             NSString *eventDate  = @"";
+             NSString *eventTimes  = @"";
+             NSString *eventTimee  = @"";
+             
+             if([eventDateTimes count]>3){
+                 eventDate = [eventDateTimes[0] stringByReplacingOccurrencesOfString:@"/" withString:@"-"];
+                 eventTimes = eventDateTimes[1];
+                 eventTimee = eventDateTimes[3];
+             }else if([eventDateTimes count]>0 && eventDateTimes[0]){
+                 eventDate = [eventDateTimes[0] stringByReplacingOccurrencesOfString:@"/" withString:@"-"];
+             }
+             
+             NSString *requestedUrl = [NSString stringWithFormat:@"%@&%@&%@&%@/event_essentials?ct_json", [defaults stringForKey:@"baseUrl"], eventDate, eventTimes, eventTimee];
+             NSLog(@"Event Detail URL: %@", requestedUrl);
+             
              [[yoyoAFHTTPSessionManager sharedManager] GET:requestedUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
                  
                  [MBProgressHUD hideHUDForView:self.view animated:YES];
                  
                  self.lblSold.text = [[myDataManager getCurrentSessionPeriod:responseServerTimeObject[@"server_datetime"]] stringByReplacingOccurrencesOfString:@"%" withString:@" "];//[NSString stringWithFormat:@"%@", responseObject[@"sold_tickets"]];
+                 self.ticketSoldInPeriod.text = [NSString stringWithFormat:@"%@", responseObject[@"sold_tickets"]];
+                 
                  if([defaults objectForKey:[myDataManager getCurrentSessionPeriod:responseServerTimeObject[@"server_datetime"]]]){
                      self.lblCheckins.text = [NSString stringWithFormat:@"%@", [defaults objectForKey:[myDataManager getCurrentSessionPeriod:responseServerTimeObject[@"server_datetime"]]]];//[NSString stringWithFormat:@"%@", responseObject[@"checked_tickets"]];
                  }else{
